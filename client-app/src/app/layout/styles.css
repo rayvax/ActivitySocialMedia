@@ -1,0 +1,11 @@
+body
+{
+  background-color: #EAEAEA;
+}
+
+/* https://colorscheme.ru/#4n21Lw0w0w0w0 */
+
+.ui.inverted.fixed.top.menu
+{
+  background-image: linear-gradient(135deg, #2C0571 0%, #492A82 69%, #926CD6 89%);
+}
