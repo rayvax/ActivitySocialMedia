@@ -1,48 +1,44 @@
-import React from 'react';
-import {Activity} from "../../../app/models/activity";
-import {Grid, GridColumn, List} from "semantic-ui-react";
-import ActivityList from "./ActivityList";
-import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
+import React, {useEffect} from 'react';
+import {Grid, GridColumn} from "semantic-ui-react";
+import ActivityList       from "./ActivityList";
+import {useStore}         from "../../../app/stores/store";
+import {observer}         from "mobx-react-lite";
+import LoadingComponent   from "../../../app/layout/LoadingComponent";
 
-interface Properties
+export default observer(function ActivityDashboard()
 {
-    activities: Activity[];
-    selectedActivity: Activity | undefined;
-    selectActivity: (id: string) => void;
-    cancelSelectActivity: () => void;
-    
-    editMode: boolean;
-    openForm: (id: string) => void;
-    closeForm: () => void;
-    
-    createOrEditActivity: (activity: Activity) => void;
-    deleteActivity: (id:string) => void;
-}
+    const {activityStore, pageStatesStore} = useStore();
+    const {activitiesByDate} = activityStore
 
-export default function ActivityDashboard({activities,
-                                              selectedActivity, selectActivity, cancelSelectActivity, 
-                                              editMode, openForm, closeForm,
-                                              createOrEditActivity, deleteActivity}: Properties)
-{
-    return(
+    useEffect(() =>
+    {
+        if(activitiesByDate.length <= 1)
+        {
+            pageStatesStore.isLoading = true;
+            
+            activityStore.loadActivities()
+                .catch((error) =>
+                {
+                    console.log(error)
+                })
+                .finally(() =>
+                {
+                    pageStatesStore.isLoading = false
+                });
+        }
+    }, [activityStore, pageStatesStore, activitiesByDate.length]);
+    
+    if (pageStatesStore.isLoading)
+        return (<LoadingComponent content={"Loading app"}/>)
+    
+    return (
         <Grid>
             <GridColumn width={'10'}>
-                <ActivityList activities={activities}  
-                              selectActivity={selectActivity} 
-                              deleteActivity={deleteActivity}/>
+                <ActivityList/>
             </GridColumn>
             <GridColumn width={'6'}>
-                {selectedActivity && !editMode && 
-                <ActivityDetails activity={selectedActivity} 
-                                 cancelSelectActivity={cancelSelectActivity}
-                                 openForm={openForm}/>}
-                
-                {editMode &&
-                <ActivityForm selectedActivity={selectedActivity}
-                              closeForm={closeForm}
-                              createOrEditActivity={createOrEditActivity}/>}
+                <h2>Activity filter</h2>
             </GridColumn>
         </Grid>
     )
-}
+})
