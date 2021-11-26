@@ -20,7 +20,7 @@ const categoryOptions =
 const defaultActivity: Activity = {
     id: '',
     title: '',
-    date: new Date(),
+    date: '',
     description: '',
     category: '',
     city: '',

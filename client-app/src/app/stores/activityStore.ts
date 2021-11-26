@@ -14,16 +14,26 @@ export default class ActivityStore
     
     public get activitiesByDate()
     {
-        return Array.from(this._activities.values()).sort((a, b) => a.date > b.date? 1 : -1);
+        return Array.from(this._activities.values())
+            .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+    }
+    
+    public get groupedActivities()
+    {
+        return Object.entries(
+            this.activitiesByDate.reduce((activities, activity) =>
+            {
+                const date = activity.date;
+                activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+                return activities;
+            }, {} as {[key:string]: Activity[]})
+        )
     }
     
     public get selectedActivity()
     {
         return this._selectedActivity;
     }
-    
-    public setSelectedActivity = (activity: Activity) => this._selectedActivity = activity;
-    
 
     public loadActivities = async () =>
     {
@@ -93,7 +103,7 @@ export default class ActivityStore
         if(!activity)
             return;
         
-        //activity.date = activity.date.split('T')[0];
+        activity.date = activity.date.split('T')[0];
         this._activities.set(activity.id, activity);
     }
 }
