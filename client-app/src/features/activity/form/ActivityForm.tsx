@@ -13,6 +13,7 @@ import TextAreaInput                from "../../../app/common/form/TextAreaInput
 import SelectInput                  from "../../../app/common/form/SelectInput";
 import {categoryOptions}            from "../../../app/common/options/сategoryOptions";
 import DateInput                    from "../../../app/common/form/DateInput";
+import axios                        from "axios";
 
 const defaultActivity: Activity = {
     id: '',
@@ -70,32 +71,25 @@ export default observer(function ActivityForm()
         const path = `/activities${activity.id.length === 0 ? "" : "/" + activity.id}`
         history.push(path);
     }
-    
+
     async function handleFormSubmit(activity: Activity)
     {
         pageStatesStore.isSubmitting = true;
 
-        try
+        if (activity.id.length === 0)
         {
-            if (activity.id.length === 0)
-            {
-                //create activity
-                activity.id = uuid();
-                activityStore.createActivity(activity).then(() => history.push(`/activities/${activity.id}`));
-            } else
-            {
-                //update activity
-                activityStore.editActivity(activity).then(() => history.push(`/activities/${activity.id}`));
-            }
+            //create activity
+            activity.id = uuid();
+            await activityStore.createActivity(activity);
         }
-        catch (error)
+        else
         {
-            console.log(error)
+            //update activity
+            await activityStore.editActivity(activity);
         }
-        finally
-        {
-            pageStatesStore.isSubmitting = false;
-        }
+        history.push(`/activities/${activity.id}`)
+
+        pageStatesStore.isSubmitting = false;
     }
 
     if (pageStatesStore.isLoading)
