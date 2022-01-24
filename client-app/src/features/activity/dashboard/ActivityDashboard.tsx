@@ -8,29 +8,19 @@ import ActivityFilters    from "./ActivityFilters";
 
 export default observer(function ActivityDashboard()
 {
-    const {activityStore, pageStatesStore} = useStore();
+    const {activityStore} = useStore();
     const {activitiesByDate} = activityStore
 
     useEffect(() =>
     {
         if(activitiesByDate.length <= 1)
         {
-            pageStatesStore.isLoading = true;
-            
             activityStore.loadActivities()
-                .catch((error) =>
-                {
-                    console.log(error)
-                })
-                .finally(() =>
-                {
-                    pageStatesStore.isLoading = false
-                });
         }
-    }, [activityStore, pageStatesStore, activitiesByDate.length]);
+    }, [activityStore, activitiesByDate.length]);
     
-    if (pageStatesStore.isLoading)
-        return (<LoadingComponent content={"Loading app"}/>)
+    if (activityStore.isLoadingInitial)
+        return (<LoadingComponent content={"Loading activites..."}/>)
     
     return (
         <Grid>

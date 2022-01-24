@@ -1,24 +1,27 @@
 import ActivitiesStore             from "./activityStore";
 import {createContext, useContext} from "react";
-import PageStatesStore             from "./pageStatesStore";
-import ErrorsStore                 from "./errorsStore";
+import CommonStore                 from "./commonStore";
+import UserStore                   from "./userStore";
+import ModalStore                  from "./modalStore";
 
-interface Store 
+interface Store
 {
     activityStore: ActivitiesStore;
-    pageStatesStore: PageStatesStore;
-    errorsStore: ErrorsStore;
+    commonStore: CommonStore;
+    userStore: UserStore;
+    modalStore: ModalStore;
 }
 
 export const store: Store = {
     activityStore: new ActivitiesStore(),
-    pageStatesStore: new PageStatesStore(),
-    errorsStore: new ErrorsStore(),
+    commonStore: new CommonStore(),
+    userStore: new UserStore(),
+    modalStore: new ModalStore(),
 }
 
 export const StoreContext = createContext(store);
 
-export function useStore() 
+export function useStore()
 {
     return useContext(StoreContext);
 }

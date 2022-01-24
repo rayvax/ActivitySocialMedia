@@ -2,9 +2,9 @@ import React, {useEffect, useState} from "react";
 import {Button, Header, Segment}    from "semantic-ui-react";
 import {useStore}                   from "../../../app/stores/store";
 import {observer}                   from "mobx-react-lite";
-import {Activity}                   from "../../../app/models/activity";
-import {useParams, useHistory}      from "react-router-dom";
-import LoadingComponent             from "../../../app/layout/LoadingComponent";
+import {Activity}                    from "../../../app/models/activity";
+import {useParams, useHistory, Link} from "react-router-dom";
+import LoadingComponent              from "../../../app/layout/LoadingComponent";
 import {v4 as uuid}                 from "uuid";
 import {Formik, Form}               from "formik";
 import * as Yup                     from "yup"
@@ -13,7 +13,6 @@ import TextAreaInput                from "../../../app/common/form/TextAreaInput
 import SelectInput                  from "../../../app/common/form/SelectInput";
 import {categoryOptions}            from "../../../app/common/options/сategoryOptions";
 import DateInput                    from "../../../app/common/form/DateInput";
-import axios                        from "axios";
 
 const defaultActivity: Activity = {
     id: '',
@@ -27,10 +26,7 @@ const defaultActivity: Activity = {
 
 export default observer(function ActivityForm()
 {
-    const {
-        activityStore,
-        pageStatesStore
-    } = useStore();
+    const { activityStore } = useStore();
     const {loadActivity} = activityStore;
     const {id} = useParams<{ id: string }>();
     const history = useHistory();
@@ -50,32 +46,13 @@ export default observer(function ActivityForm()
     {
         if (id)
         {
-            pageStatesStore.isLoading = true;
-            loadActivity(id).then((activity) =>
-            {
-                SetActivity(activity!)
-            })
-                            .catch((error) =>
-                            {
-                                console.log(error);
-                            })
-                            .finally(() =>
-                            {
-                                pageStatesStore.isLoading = false;
-                            })
+            loadActivity(id)
+                .then((activity) => SetActivity(activity!))
         }
-    }, [id, loadActivity, pageStatesStore, history])
-
-    function handleCancel()
-    {
-        const path = `/activities${activity.id.length === 0 ? "" : "/" + activity.id}`
-        history.push(path);
-    }
+    }, [id, loadActivity])
 
     async function handleFormSubmit(activity: Activity)
     {
-        pageStatesStore.isSubmitting = true;
-
         if (activity.id.length === 0)
         {
             //create activity
@@ -87,12 +64,11 @@ export default observer(function ActivityForm()
             //update activity
             await activityStore.editActivity(activity);
         }
-        history.push(`/activities/${activity.id}`)
 
-        pageStatesStore.isSubmitting = false;
+        history.push(`/activities/${activity.id}`);
     }
 
-    if (pageStatesStore.isLoading)
+    if (activityStore.isLoadingInitial)
         return <LoadingComponent content={'Loading activity...'}/>
 
     return (
@@ -102,7 +78,7 @@ export default observer(function ActivityForm()
                     initialValues={activity}
                     onSubmit={handleFormSubmit}>
                 {({
-                      handleSubmit
+                      handleSubmit, isSubmitting, dirty, isValid
                   }) =>
                     (
                         <Form className="ui form" onSubmit={handleSubmit} autoComplete={'off'}>
@@ -137,11 +113,13 @@ export default observer(function ActivityForm()
                                     content={'Submit'}
                                     positive
                                     floated={"right"}
-                                    loading={pageStatesStore.isSubmitting}/>
-                            <Button onClick={() => handleCancel()}
-                                    type={'button'}
-                                    content={'Cancel'}
-                                    floated={"right"}/>
+                                    loading={activityStore.isLoading}
+                                    disabled={isSubmitting || !dirty || !isValid} />
+                            <Button as={Link}
+                                    to='/activities'
+                                    floated='right'
+                                    type='button'
+                                    content='Cancel' />
                         </Form>
                     )}
             </Formik>

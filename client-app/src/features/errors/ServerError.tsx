@@ -5,16 +5,16 @@ import {observer}                   from "mobx-react-lite";
 
 export default observer(function ServerError()
 {
-    const {errorsStore} = useStore();
+    const {commonStore} = useStore();
 
     return (
         <Container>
             <Header as='h2' content={'Server Error'}/>
-            <Header sub  as={'h3'} content={errorsStore.error?.message} color={'red'}/>
-            {errorsStore.error?.details &&
+            <Header sub as={'h3'} content={commonStore.error?.message} color={'red'}/>
+            {commonStore.error?.details &&
             <Segment>
                 <Header sub as={'h4'} content={'Stack Trace'} color={'teal'} style={{marginBottom: '10px'}} />
-                <code>{errorsStore.error.details}</code>
+                <code>{commonStore.error.details}</code>
             </Segment>
             }
         </Container>

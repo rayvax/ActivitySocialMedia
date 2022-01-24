@@ -3,6 +3,7 @@ import {Activity}                         from "../models/activity";
 import {toast}                            from "react-toastify";
 import {history}                          from "../../index";
 import {store}                            from "../stores/store";
+import {User, UserFormValues}             from "../models/user";
 
 const sleep = (delay: number) =>
 {
@@ -13,77 +14,95 @@ const sleep = (delay: number) =>
 }
 
 axios.defaults.baseURL = "http://localhost:5000/api";
-axios.interceptors.response.use(async (response) => 
+
+axios.interceptors.request.use(config =>
 {
-    await sleep(1000);
-    return response;
-}, 
-    (error: AxiosError) => {
-    const {data, status} = error.response!;
-    
-    switch (status)
+    const token = store.commonStore.token;
+    if(token)
+        config.headers.Authorization = `Bearer ${token}`
+
+    return config;
+})
+
+axios.interceptors.response.use(async (response) =>
     {
-        case 400:
-            if(data.errors)
-            {
-                //bad guid
-                if(data.errors.hasOwnProperty('guid'))
+        await sleep(1000);
+        return response;
+    },
+    (error: AxiosError) =>
+    {
+        const {data, status} = error.response!;
+
+        switch (status)
+        {
+            case 400:
+                if (data.errors)
                 {
-                    history.push('/not-found');
-                }
-                
-                //validation error
-                const errorMessages = [];
-                for (const key in data.errors)
-                {
-                    if(data.errors[key])
+                    //bad guid
+                    if (data.errors.hasOwnProperty('guid'))
                     {
-                        errorMessages.push(data.errors[key]);
+                        history.push('/not-found');
                     }
+
+                    //validation error
+                    const errorMessages = [];
+                    for (const key in data.errors)
+                    {
+                        if (data.errors[key])
+                        {
+                            errorMessages.push(data.errors[key]);
+                        }
+                    }
+
+                    throw errorMessages.flat();
                 }
+                else
+                {
+                    //bad request
+                    toast.error(data);
+                }
+                break;
+            case 401:
+                toast.error('Unauthorised');
+                break;
+            case 404:
+                history.push('/not-found');
+                break;
+            case 500:
+                store.commonStore.error = data;
+                history.push('/server-error')
+                break;
+        }
 
-                throw errorMessages.flat();
-            }
-            else
-            {
-                //bad request
-                toast.error(data);
-            }
-            break;
-        case 401:
-            toast.error('Unauthorised');
-            break;
-        case 404:
-            history.push('/not-found');
-            break;
-        case 500:
-            store.errorsStore.error = data;
-            history.push('/server-error')
-            break;
-    }
-    
-    return Promise.reject(error);
-} )
+        return Promise.reject(error);
+    })
 
-const responseBody = <T> (response: AxiosResponse<T>) => response.data;
+const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 const requests = {
-    get: <T> (url: string) => axios.get<T>(url).then(responseBody),
-    post: <T> (url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
-    put: <T> (url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
-    delete: <T> (url: string) => axios.delete<T>(url).then(responseBody)
+    get: <T>(url: string) => axios.get<T>(url).then(responseBody),
+    post: <T>(url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
+    put: <T>(url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
+    delete: <T>(url: string) => axios.delete<T>(url).then(responseBody)
 }
 
 const Activities = {
     getList: () => requests.get<Activity[]>('/activities'),
-    getActivity: (id:string) => requests.get<Activity>(`/activities/${id}`),
+    getActivity: (id: string) => requests.get<Activity>(`/activities/${id}`),
     create: (activity: Activity) => requests.post('/activities', activity),
     edit: (activity: Activity) => requests.put(`/activities/${activity.id}`, activity),
     delete: (id: string) => requests.delete(`/activities/${id}`)
 }
 
+const Account = {
+    currentUser: () => requests.get<User>('/account'),
+    login: (user: UserFormValues) => requests.post<User>('/account/login', user),
+    register: (user: UserFormValues) => requests.post<User>('/account/register', user)
+}
+
 const agent = {
-    Activities
+    Activities,
+    Account
 }
 
 export default agent;

@@ -10,7 +10,7 @@ interface Props
     label?: string;
 }
 
-export default function TextInput(props: Props)
+export default function SelectInput(props: Props)
 {
     const [field, meta, helpers] = useField(props.name);
 

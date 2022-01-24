@@ -49,10 +49,16 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await _userManager.Users.AnyAsync(user => user.Email == registerDto.Email))
-                return BadRequest("Email taken");
-            if (await _userManager.Users.AnyAsync(user => user.UserName == registerDto.UserName))
-                return BadRequest("UserName taken");
+            if (await _userManager.Users.AnyAsync(p => p.Email == registerDto.Email))
+            {
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
+            }
+            if (await _userManager.Users.AnyAsync(p => p.UserName == registerDto.UserName))
+            {
+                ModelState.AddModelError("userName", "Username taken");
+                return ValidationProblem();
+            }
 
             var user = new AppUser
             {
@@ -75,6 +81,9 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+                return BadRequest("Didn't find matching email");
+            
             var user = await _userManager.FindByEmailAsync(email);
 
             return CreateUseDto(user);

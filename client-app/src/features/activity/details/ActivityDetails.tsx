@@ -11,7 +11,7 @@ import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
 
 export default observer(function ActivityDetails()
 {
-    const {activityStore, pageStatesStore} = useStore();
+    const { activityStore } = useStore();
     const {selectedActivity: activity} = activityStore;
     const {id} = useParams<{ id: string }>();
 
@@ -19,20 +19,11 @@ export default observer(function ActivityDetails()
     {
         if (id)
         {
-            pageStatesStore.isLoading = true;
             activityStore.loadActivity(id)
-                .catch((error) =>
-                {
-                    console.log(error);
-                })
-                .finally(() =>
-                {
-                    pageStatesStore.isLoading = false;
-                });
         }
-    }, [id, activityStore, pageStatesStore])
+    }, [id, activityStore])
 
-    if (pageStatesStore.isLoading || !activity) return <LoadingComponent/>;
+    if (activityStore.isLoadingInitial || !activity) return <LoadingComponent/>;
 
     return (
         <Grid>
