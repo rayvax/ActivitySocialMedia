@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
     public class ActivitiesController : BaseApiController
     {
         [HttpGet]
@@ -34,6 +33,7 @@ namespace API.Controllers
             return ConvertToHttpResponse(result);
         }
 
+        [Authorize(Policy = "IsActivityHost")]
         [HttpPut("{guid}")]
         public async Task<IActionResult> EditActivity(Guid guid, Activity activity)
         {
@@ -43,10 +43,18 @@ namespace API.Controllers
             return ConvertToHttpResponse(result);
         }
 
+        [Authorize(Policy = "IsActivityHost")]
         [HttpDelete("{guid}")]
         public async Task<IActionResult> DeleteActivity(Guid guid)
         {
             var result = await Mediator.Send(new Delete.Command {Id = guid});
+            return ConvertToHttpResponse(result);
+        }
+
+        [HttpPost("{guid}/attend")]
+        public async Task<IActionResult> UpdateAttendance(Guid guid)
+        {
+            var result = await Mediator.Send(new UpdateAttendance.Command {Id = guid});
             return ConvertToHttpResponse(result);
         }
     }
