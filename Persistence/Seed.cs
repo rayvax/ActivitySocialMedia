@@ -48,7 +48,7 @@ namespace Persistence
                         Title = "Past Activity 1",
                         Date = DateTime.Now.AddMonths(-2),
                         Description = "Activity 2 months ago",
-                        Category = "drinks",
+                        Category = "meeting",
                         City = "London",
                         Venue = "Pub",
                         Attendees = new List<ActivityAttendee>
@@ -131,7 +131,7 @@ namespace Persistence
                         Title = "Future Activity 3",
                         Date = DateTime.Now.AddMonths(3),
                         Description = "Activity 3 months in future",
-                        Category = "drinks",
+                        Category = "meeting",
                         City = "London",
                         Venue = "Pub",
                         Attendees = new List<ActivityAttendee>
@@ -170,7 +170,7 @@ namespace Persistence
                         Title = "Future Activity 5",
                         Date = DateTime.Now.AddMonths(5),
                         Description = "Activity 5 months in future",
-                        Category = "drinks",
+                        Category = "meeting",
                         City = "London",
                         Venue = "Punch and Judy",
                         Attendees = new List<ActivityAttendee>
@@ -236,7 +236,7 @@ namespace Persistence
                         Title = "Future Activity 8",
                         Date = DateTime.Now.AddMonths(8),
                         Description = "Activity 8 months in future",
-                        Category = "drinks",
+                        Category = "meeting",
                         City = "London",
                         Venue = "Pub",
                         Attendees = new List<ActivityAttendee>

@@ -96,7 +96,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Image = null,
                 Token = _tokenService.CreateToken(user),
-                Username = user.UserName
+                UserName = user.UserName
             };
         }
     }

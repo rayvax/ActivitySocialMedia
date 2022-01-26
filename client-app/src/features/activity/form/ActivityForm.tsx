@@ -1,28 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {Button, Header, Segment}    from "semantic-ui-react";
 import {useStore}                   from "../../../app/stores/store";
-import {observer}                   from "mobx-react-lite";
-import {Activity}                    from "../../../app/models/activity";
-import {useParams, useHistory, Link} from "react-router-dom";
-import LoadingComponent              from "../../../app/layout/LoadingComponent";
-import {v4 as uuid}                 from "uuid";
-import {Formik, Form}               from "formik";
-import * as Yup                     from "yup"
-import TextInput                    from "../../../app/common/form/TextInput"
-import TextAreaInput                from "../../../app/common/form/TextAreaInput";
-import SelectInput                  from "../../../app/common/form/SelectInput";
-import {categoryOptions}            from "../../../app/common/options/сategoryOptions";
-import DateInput                    from "../../../app/common/form/DateInput";
-
-const defaultActivity: Activity = {
-    id: '',
-    title: '',
-    date: null,
-    description: '',
-    category: '',
-    city: '',
-    venue: ''
-}
+import {observer}                     from "mobx-react-lite";
+import {ActivityFormValues} from "../../../app/models/activity";
+import {useParams, useHistory, Link}  from "react-router-dom";
+import LoadingComponent               from "../../../app/layout/LoadingComponent";
+import {v4 as uuid}                   from "uuid";
+import {Formik, Form}                 from "formik";
+import * as Yup                       from "yup"
+import TextInput                      from "../../../app/common/form/TextInput"
+import TextAreaInput                  from "../../../app/common/form/TextAreaInput";
+import SelectInput                    from "../../../app/common/form/SelectInput";
+import {categoryOptions}              from "../../../app/common/options/сategoryOptions";
+import DateInput                      from "../../../app/common/form/DateInput";
 
 export default observer(function ActivityForm()
 {
@@ -31,7 +21,7 @@ export default observer(function ActivityForm()
     const {id} = useParams<{ id: string }>();
     const history = useHistory();
 
-    const [activity, SetActivity] = useState(defaultActivity);
+    const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
     const validationSchema = Yup.object({
         title: Yup.string().required("The activity title is required"),
@@ -46,14 +36,16 @@ export default observer(function ActivityForm()
     {
         if (id)
         {
+
             loadActivity(id)
-                .then((activity) => SetActivity(activity!))
+                .then(activity => setActivity(new ActivityFormValues(activity)))
+
         }
     }, [id, loadActivity])
 
-    async function handleFormSubmit(activity: Activity)
+    async function handleFormSubmit(activity: ActivityFormValues)
     {
-        if (activity.id.length === 0)
+        if (!activity.id)
         {
             //create activity
             activity.id = uuid();
@@ -113,10 +105,10 @@ export default observer(function ActivityForm()
                                     content={'Submit'}
                                     positive
                                     floated={"right"}
-                                    loading={activityStore.isLoading}
+                                    loading={isSubmitting}
                                     disabled={isSubmitting || !dirty || !isValid} />
                             <Button as={Link}
-                                    to='/activities'
+                                    to={`/activities`}
                                     floated='right'
                                     type='button'
                                     content='Cancel' />

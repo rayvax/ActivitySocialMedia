@@ -9,7 +9,7 @@ import RegisterForm                                from "../user/RegisterForm";
 export default observer(function HomePage()
 {
     const {userStore, modalStore} = useStore();
-
+    
     return (
         <Segment inverted vertical textAlign={'center'} className='masthead'>
             <Container text>
@@ -22,7 +22,7 @@ export default observer(function HomePage()
                         <>
                             <Header as={'h2'} inverted content={'Welcome to Reactivities'}/>
                             <Button as={Link}
-                                    to={'/activities'}
+                                    to={`/activities`}
                                     size={'huge'}
                                     inverted>
                                 Go to activities!

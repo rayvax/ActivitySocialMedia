@@ -11,7 +11,7 @@ export default function NotFound()
                 Oops, we've looked everywhere and could not find this.
             </Header>
             <Segment.Inline>
-                <Button as={Link} to={'/activities'} primary>
+                <Button as={Link} to={`/activities`} primary>
                     Go to activities page
                 </Button>
             </Segment.Inline>

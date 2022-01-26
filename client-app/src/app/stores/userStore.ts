@@ -25,7 +25,7 @@ export default class UserStore
 
         runInAction(() => this.user = user);
 
-        history.push('/activities');
+        history.push(`/activities`);
         store.modalStore.closeModal();
     }
 
@@ -44,7 +44,7 @@ export default class UserStore
 
         runInAction(() => this.user = user);
 
-        history.push('/activities');
+        history.push(`/activities`);
         store.modalStore.closeModal();
     }
 
