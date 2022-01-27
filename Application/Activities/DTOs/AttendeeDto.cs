@@ -1,15 +1,10 @@
-using System.Collections.Generic;
-using Domain;
-
-namespace Application.Profiles
+namespace Application.Activities.DTOs
 {
-    public class Profile
+    public class AttendeeDto
     {
         public string UserName { get; set; }
         public string DisplayName { get; set; }
         public string About { get; set; }
         public string Image { get; set; }
-
-        public ICollection<Photo> Photos { get; set; }
     }
 }

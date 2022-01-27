@@ -12,7 +12,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetActivities()
         {
-            var result = await Mediator.Send(new List.Query());
+            var result = await Mediator.Send(new ActivityList.Query());
 
             return ConvertToHttpResponse(result);
         }
@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public async Task<IActionResult> GetActivity(Guid guid)
         {
-            var result = await Mediator.Send(new Details.Query{Id = guid});
+            var result = await Mediator.Send(new ActivityDetails.Query{Id = guid});
 
             return ConvertToHttpResponse(result);
         }

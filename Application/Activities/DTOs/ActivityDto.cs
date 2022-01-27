@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Application.Profiles;
 
-namespace Application.Activities
+namespace Application.Activities.DTOs
 {
     public class ActivityDto
     {
@@ -16,6 +15,6 @@ namespace Application.Activities
         public bool IsCancelled { get; set; }
 
         public string HostUserName { get; set; }
-        public ICollection<Profile> Attendees { get; set; }
+        public ICollection<AttendeeDto> Attendees { get; set; }
     }
 }

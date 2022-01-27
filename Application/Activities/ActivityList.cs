@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Activities.DTOs;
 using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities
 {
-    public class List
+    public class ActivityList
     {
         public class Query : IRequest<Result<List<ActivityDto>>> {}
 

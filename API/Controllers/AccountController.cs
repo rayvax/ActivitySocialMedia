@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -31,19 +32,17 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _userManager.Users.Include(p => p.Photos)
+                .FirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
             if (user == null)
                 return Unauthorized();
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-            if (result.Succeeded)
-            {
-                return CreateUseDto(user);
-            }
-
-            return Unauthorized();
+            return result.Succeeded
+                ? CreateUserDto(user)
+                : Unauthorized();
         }
 
         [HttpPost("register")]
@@ -71,7 +70,7 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                return CreateUseDto(user);
+                return CreateUserDto(user);
             }
 
             return BadRequest("Problem registering user");
@@ -82,19 +81,20 @@ namespace API.Controllers
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
             if (email == null)
-                return BadRequest("Didn't find matching email");
+                return BadRequest("Problem finding matching email for user");
             
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.Users.Include(p => p.Photos)
+                .FirstOrDefaultAsync(x => x.Email == email);
 
-            return CreateUseDto(user);
+            return CreateUserDto(user);
         }
 
-        private UserDto CreateUseDto(AppUser user)
+        private UserDto CreateUserDto(AppUser user)
         {
             return new UserDto
             {
                 DisplayName = user.DisplayName,
-                Image = null,
+                Image = user?.Photos?.FirstOrDefault(p => p.IsMain)?.Url,
                 Token = _tokenService.CreateToken(user),
                 UserName = user.UserName
             };

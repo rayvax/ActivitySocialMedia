@@ -1,4 +1,5 @@
 using Application.Inferfaces;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,11 @@ namespace API.Extensions
                     policyBuilder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
                 });
             });
-            services.AddMediatR(typeof(Application.Activities.List).Assembly);
+            services.AddMediatR(typeof(Application.Activities.ActivityList).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, CloudinaryPhotoAccessor>();
+            services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
             return services;
         }
