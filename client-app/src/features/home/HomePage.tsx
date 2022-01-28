@@ -4,7 +4,8 @@ import {Button, Container, Header, Image, Segment} from "semantic-ui-react";
 import {useStore}                                  from "../../app/stores/store";
 import {observer}                                  from "mobx-react-lite";
 import LoginForm                                   from "../user/LoginForm";
-import RegisterForm                                from "../user/RegisterForm";
+import RegisterForm               from "../user/RegisterForm";
+import {activitiesPath, logoPath} from "../../utils/paths";
 
 export default observer(function HomePage()
 {
@@ -14,7 +15,7 @@ export default observer(function HomePage()
         <Segment inverted vertical textAlign={'center'} className='masthead'>
             <Container text>
                 <Header as={'h1'} inverted>
-                    <Image src={'/assets/logo.png'} alt={'logo'} size={'massive'} style={{marginBottom: 12}}/>
+                    <Image src={logoPath} alt={'logo'} size={'massive'} style={{marginBottom: 12}}/>
                     Reactivities
                 </Header>
                 {userStore.isLoggedIn
@@ -22,7 +23,7 @@ export default observer(function HomePage()
                         <>
                             <Header as={'h2'} inverted content={'Welcome to Reactivities'}/>
                             <Button as={Link}
-                                    to={`/activities`}
+                                    to={activitiesPath}
                                     size={'huge'}
                                     inverted>
                                 Go to activities!

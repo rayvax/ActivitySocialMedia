@@ -1,6 +1,7 @@
-import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { observer }                             from 'mobx-react-lite'
+import React                                    from 'react'
 import {Segment, Header, Comment, Form, Button} from 'semantic-ui-react'
+import {profileImagePlaceholder}                from "../../../utils/paths";
 
 export default observer(function ActivityDetailedChat() {
     return (
@@ -17,7 +18,7 @@ export default observer(function ActivityDetailedChat() {
             <Segment attached>
                 <Comment.Group>
                     <Comment>
-                        <Comment.Avatar src='/assets/user.png'/>
+                        <Comment.Avatar src={profileImagePlaceholder}/>
                         <Comment.Content>
                             <Comment.Author as='a'>Matt</Comment.Author>
                             <Comment.Metadata>
@@ -31,7 +32,7 @@ export default observer(function ActivityDetailedChat() {
                     </Comment>
 
                     <Comment>
-                        <Comment.Avatar src='/assets/user.png'/>
+                        <Comment.Avatar src={profileImagePlaceholder}/>
                         <Comment.Content>
                             <Comment.Author as='a'>Joe Henderson</Comment.Author>
                             <Comment.Metadata>

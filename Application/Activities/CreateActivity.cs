@@ -10,7 +10,7 @@ using Persistence;
 
 namespace Application.Activities
 {
-    public class Create
+    public class CreateActivity
     {
         public class Command : IRequest<Result<Unit>>
         {

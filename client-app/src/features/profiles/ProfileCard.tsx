@@ -1,7 +1,8 @@
-import React         from "react";
+import React               from "react";
 import Profile             from "../../app/models/profile";
 import {Card, Icon, Image} from "semantic-ui-react";
-import {Link}              from "react-router-dom";
+import {Link}                                 from "react-router-dom";
+import {profileImagePlaceholder, profilePath} from "../../utils/paths";
 
 interface Props
 {
@@ -11,8 +12,8 @@ interface Props
 export default function ProfileCard({profile}: Props)
 {
     return (
-        <Card as={Link} to={`/profiles/${profile.userName}`}>
-            <Image src={profile.image || '/assets/user.png'}/>
+        <Card as={Link} to={profilePath(profile.userName)}>
+            <Image src={profile.image || profileImagePlaceholder}/>
             <Card.Content>
                 <Card.Header>{profile.displayName}</Card.Header>
                 <Card.Description>Bio goes here</Card.Description>

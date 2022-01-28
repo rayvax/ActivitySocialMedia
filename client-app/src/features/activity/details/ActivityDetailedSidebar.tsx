@@ -2,7 +2,8 @@ import React                               from 'react'
 import {Segment, List, Label, Item, Image} from 'semantic-ui-react'
 import {Link}                              from 'react-router-dom'
 import {observer}                          from 'mobx-react-lite'
-import {Activity}                          from "../../../app/models/activity";
+import {Activity}                from "../../../app/models/activity";
+import {profileImagePlaceholder} from "../../../utils/paths";
 
 interface Props
 {
@@ -38,7 +39,7 @@ export default observer(function ActivityDetailedSidebar({activity: {attendees, 
                                     </Label>
                                 }
 
-                                <Image size='tiny' src={attendee.image || '/assets/user.png'}/>
+                                <Image size='tiny' src={attendee.image || profileImagePlaceholder}/>
                                 <Item.Content verticalAlign='middle'>
                                     <Item.Header as='h3'>
                                         <Link to={`/profile/${attendee.userName}`}>{attendee.displayName}</Link>

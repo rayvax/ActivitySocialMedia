@@ -32,7 +32,7 @@ namespace API
                 })
                 .AddFluentValidation(config =>
             {
-                config.RegisterValidatorsFromAssemblyContaining<Create>();
+                config.RegisterValidatorsFromAssemblyContaining<CreateActivity>();
             });
             services.AddApplicationServices(_config);
             services.AddIdentityServices(_config);

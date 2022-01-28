@@ -1,6 +1,7 @@
 import React                           from "react";
 import {Button, Header, Icon, Segment} from "semantic-ui-react";
-import {Link}                          from "react-router-dom";
+import {Link}           from "react-router-dom";
+import {activitiesPath} from "../../utils/paths";
 
 export default function NotFound()
 {
@@ -11,7 +12,7 @@ export default function NotFound()
                 Oops, we've looked everywhere and could not find this.
             </Header>
             <Segment.Inline>
-                <Button as={Link} to={`/activities`} primary>
+                <Button as={Link} to={activitiesPath} primary>
                     Go to activities page
                 </Button>
             </Segment.Inline>

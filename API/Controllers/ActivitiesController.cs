@@ -28,7 +28,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateActivity(Activity activity)
         {
-            var result = await Mediator.Send(new Create.Command {ActivityToCreate = activity});
+            var result = await Mediator.Send(new CreateActivity.Command {ActivityToCreate = activity});
 
             return ConvertToHttpResponse(result);
         }
@@ -38,7 +38,7 @@ namespace API.Controllers
         public async Task<IActionResult> EditActivity(Guid guid, Activity activity)
         {
             activity.Id = guid;
-            var result = await Mediator.Send(new Edit.Command {EditedActivity = activity});
+            var result = await Mediator.Send(new EditActivity.Command {EditedActivity = activity});
 
             return ConvertToHttpResponse(result);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         [HttpDelete("{guid}")]
         public async Task<IActionResult> DeleteActivity(Guid guid)
         {
-            var result = await Mediator.Send(new Delete.Command {Id = guid});
+            var result = await Mediator.Send(new DeleteActivity.Command {Id = guid});
             return ConvertToHttpResponse(result);
         }
 

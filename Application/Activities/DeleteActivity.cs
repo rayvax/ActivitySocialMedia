@@ -7,7 +7,7 @@ using Persistence;
 
 namespace Application.Activities
 {
-    public class Delete
+    public class DeleteActivity
     {
         public class Command : IRequest<Result<Unit>>
         {

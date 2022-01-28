@@ -9,7 +9,7 @@ using Persistence;
 
 namespace Application.Photos
 {
-    public class Delete
+    public class DeletePhoto
     {
         public class Command : IRequest<Result<Unit>>
         {
@@ -49,6 +49,7 @@ namespace Application.Photos
 
                 user.Photos.Remove(photo);
 
+                _dataContext.Photos.Remove(photo);
                 var success = await _dataContext.SaveChangesAsync() > 0;
 
                 return success

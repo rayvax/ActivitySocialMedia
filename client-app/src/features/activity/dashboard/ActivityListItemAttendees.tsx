@@ -3,7 +3,8 @@ import {observer}           from "mobx-react-lite";
 import {List, Image, Popup} from "semantic-ui-react";
 import Profile              from "../../../app/models/profile";
 import {Link}               from "react-router-dom";
-import ProfileCard          from "../../Profiles/ProfileCard";
+import ProfileCard                            from "../../profiles/ProfileCard";
+import {profileImagePlaceholder, profilePath} from "../../../utils/paths";
 
 interface Props
 {
@@ -19,8 +20,8 @@ export default observer(function ActivityListItemAttendees({attendees}: Props)
                     <Popup key={attendee.userName}
                            hoverable
                            trigger={
-                               <List.Item key={attendee.userName} as={Link} to={`/profiles/${attendee.userName}`}>
-                                   <Image src={attendee.image || "/assets/user.png"} size={"mini"} circular/>
+                               <List.Item key={attendee.userName} as={Link} to={profilePath(attendee.userName)}>
+                                   <Image src={attendee.image || profileImagePlaceholder} size={"mini"} circular/>
                                </List.Item>
                            }
                     >

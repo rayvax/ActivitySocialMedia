@@ -1,9 +1,20 @@
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {Activity, ActivityFormValues}     from "../models/activity";
-import {toast}                            from "react-toastify";
-import {history}                          from "../../index";
-import {store}                            from "../stores/store";
-import {User, UserFormValues}             from "../models/user";
+import axios, {AxiosError, AxiosResponse}                 from "axios";
+import {Activity, ActivityFormValues}                     from "../models/activity";
+import {toast}                                            from "react-toastify";
+import {history}                                          from "../../index";
+import {store}                                            from "../stores/store";
+import {User, UserFormValues} from "../models/user";
+import {
+    accountPath,
+    activitiesPath,
+    activityPath,
+    attendActivityPath,
+    loginPath,
+    photosPath,
+    profilePath,
+    registerPath, setMainPhotoPath
+} from "../../utils/paths";
+import Profile, {Photo}       from "../models/profile";
 
 const sleep = (delay: number) =>
 {
@@ -18,7 +29,7 @@ axios.defaults.baseURL = "http://localhost:5000/api";
 axios.interceptors.request.use(config =>
 {
     const token = store.commonStore.token;
-    if(token)
+    if (token)
         config.headers.Authorization = `Bearer ${token}`
 
     return config;
@@ -87,25 +98,40 @@ const requests = {
 }
 
 const Activities = {
-    getList: () => requests.get<Activity[]>(`/activities`),
-    getActivity: (id: string) => requests.get<Activity>(`/activities/${id}`),
-    create: (activity: ActivityFormValues) => requests.post<void>(`/activities`, activity),
-    edit: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
-    delete: (id: string) => requests.delete<void>(`/activities/${id}`),
+    getList: () => requests.get<Activity[]>(activitiesPath),
+    getActivity: (id: string) => requests.get<Activity>(activityPath(id)),
+    create: (activity: ActivityFormValues) => requests.post<void>(activitiesPath, activity),
+    edit: (activity: ActivityFormValues) => requests.put<void>(activityPath(activity.id || "unknown"), activity),
+    delete: (id: string) => requests.delete<void>(activityPath(id)),
 
     //attend (for regular user) or cancel (for host)
-    attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {}),
+    attend: (id: string) => requests.post<void>(attendActivityPath(id), {}),
 }
 
 const Account = {
-    currentUser: () => requests.get<User>('/account'),
-    login: (user: UserFormValues) => requests.post<User>('/account/login', user),
-    register: (user: UserFormValues) => requests.post<User>('/account/register', user)
+    currentUser: () => requests.get<User>(accountPath),
+    login: (user: UserFormValues) => requests.post<User>(loginPath, user),
+    register: (user: UserFormValues) => requests.post<User>(registerPath, user)
+}
+
+const Profiles = {
+    getProfile: (userName: string) => requests.get<Profile>(profilePath(userName)),
+    uploadPhoto: (file: Blob) =>
+    {
+        let formaData = new FormData();
+        formaData.append('File', file);
+        return axios.post<Photo>('photos', formaData, {
+            headers: {'Content-type': 'multipart/form-data'}
+        })
+    },
+    setMainImage: (id: string) => requests.post(setMainPhotoPath(id), {}),
+    deleteImage: (id: string) => requests.delete(photosPath(id))
 }
 
 const agent = {
     Activities,
-    Account
+    Account,
+    Profiles
 }
 
 export default agent;

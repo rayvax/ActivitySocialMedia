@@ -9,7 +9,7 @@ using Persistence;
 
 namespace Application.Photos
 {
-    public class SetMain
+    public class SetMainPhoto
     {
         public class Command : IRequest<Result<Unit>>
         {

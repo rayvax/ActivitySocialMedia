@@ -1,9 +1,10 @@
 import React                                from "react";
 import {Segment, Item, Icon, Button, Label} from "semantic-ui-react";
 import {Link}                               from "react-router-dom";
-import {Activity}                from "../../../app/models/activity";
-import {formatDate}              from "../../../utils/date-fns-utils";
-import ActivityListItemAttendees from "./ActivityListItemAttendees";
+import {Activity}                           from "../../../app/models/activity";
+import {formatDate}                         from "../../../utils/date-fns-utils";
+import ActivityListItemAttendees                            from "./ActivityListItemAttendees";
+import {activityPath, profileImagePlaceholder, profilePath} from "../../../utils/paths";
 
 interface Props
 {
@@ -22,15 +23,23 @@ export default function ActivityListItem({activity}: Props)
                            style={{textAlign: 'center'}}
                     />
                 }
-
                 <Item.Group>
                     <Item>
-                        <Item.Image size={"tiny"} circular src={"/assets/user.png"} style={{marginBottom: 3}}/>
+                        <Item.Image src={activity.host?.image || profileImagePlaceholder}
+                                    as={Link}
+                                    to={profilePath(activity.hostUserName)}
+                                    size={"tiny"}
+                                    circular
+                                    style={{marginBottom: 3}}
+                        />
                         <Item.Content>
-                            <Item.Header as={Link} to={`/activities/${activity.id}`}>
+                            <Item.Header as={Link} to={activityPath(activity.id)}>
                                 {activity.title}
                             </Item.Header>
-                            <Item.Description>Hosted by {activity.host?.displayName}</Item.Description>
+                            <Item.Description>Hosted by <Link to={profilePath(activity.hostUserName)}>
+                                {activity.host?.displayName}
+                            </Link>
+                            </Item.Description>
                             {activity.isHosting &&
                                 (
                                     <Item.Description>
@@ -62,7 +71,7 @@ export default function ActivityListItem({activity}: Props)
             </Segment>
             <Segment clearing>
                 <span>{activity.description}</span>
-                <Button as={Link} to={`/activities/${activity.id}`}
+                <Button as={Link} to={activityPath(activity.id)}
                         color={"teal"}
                         floated={"right"}
                         content={"View"}

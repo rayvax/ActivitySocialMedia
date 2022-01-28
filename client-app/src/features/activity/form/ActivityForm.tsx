@@ -2,17 +2,18 @@ import React, {useEffect, useState} from "react";
 import {Button, Header, Segment}    from "semantic-ui-react";
 import {useStore}                   from "../../../app/stores/store";
 import {observer}                     from "mobx-react-lite";
-import {ActivityFormValues} from "../../../app/models/activity";
-import {useParams, useHistory, Link}  from "react-router-dom";
-import LoadingComponent               from "../../../app/layout/LoadingComponent";
-import {v4 as uuid}                   from "uuid";
-import {Formik, Form}                 from "formik";
-import * as Yup                       from "yup"
-import TextInput                      from "../../../app/common/form/TextInput"
-import TextAreaInput                  from "../../../app/common/form/TextAreaInput";
-import SelectInput                    from "../../../app/common/form/SelectInput";
-import {categoryOptions}              from "../../../app/common/options/сategoryOptions";
+import {ActivityFormValues}          from "../../../app/models/activity";
+import {useParams, useHistory, Link} from "react-router-dom";
+import LoadingComponent              from "../../../app/layout/LoadingComponent";
+import {v4 as uuid}                  from "uuid";
+import {Formik, Form}                from "formik";
+import * as Yup                      from "yup"
+import TextInput                     from "../../../app/common/form/TextInput"
+import TextAreaInput                 from "../../../app/common/form/TextAreaInput";
+import SelectInput                   from "../../../app/common/form/SelectInput";
+import {categoryOptions}             from "../../../app/common/options/сategoryOptions";
 import DateInput                      from "../../../app/common/form/DateInput";
+import {activitiesPath, activityPath} from "../../../utils/paths";
 
 export default observer(function ActivityForm()
 {
@@ -57,7 +58,7 @@ export default observer(function ActivityForm()
             await activityStore.editActivity(activity);
         }
 
-        history.push(`/activities/${activity.id}`);
+        history.push(activityPath(activity.id));
     }
 
     if (activityStore.isLoadingInitial)
@@ -108,10 +109,11 @@ export default observer(function ActivityForm()
                                     loading={isSubmitting}
                                     disabled={isSubmitting || !dirty || !isValid} />
                             <Button as={Link}
-                                    to={`/activities`}
+                                    to={activitiesPath}
                                     floated='right'
                                     type='button'
-                                    content='Cancel' />
+                                    content='Cancel'
+                                    disabled={isSubmitting}/>
                         </Form>
                     )}
             </Formik>

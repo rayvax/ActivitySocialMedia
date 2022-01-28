@@ -6,6 +6,7 @@ export default interface Profile
     displayName: string;
     about?: string;
     image?: string;
+    photos?: Photo[];
 }
 
 export class ProfileWrapper implements Profile
@@ -20,5 +21,11 @@ export class ProfileWrapper implements Profile
         this.displayName = user.displayName;
         this.image = user.image;
     }
+}
 
+export interface Photo
+{
+    id: string;
+    url: string;
+    isMain: boolean;
 }

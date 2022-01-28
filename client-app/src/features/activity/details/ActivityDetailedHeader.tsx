@@ -4,7 +4,8 @@ import {Button, Header, Item, Segment, Image, Label} from 'semantic-ui-react'
 import {Activity}                                    from "../../../app/models/activity";
 import {Link}                                        from "react-router-dom";
 import {formatDate}                                  from "../../../utils/date-fns-utils";
-import {useStore}                                    from "../../../app/stores/store";
+import {useStore}                       from "../../../app/stores/store";
+import {categoryImagePath, profilePath} from "../../../utils/paths";
 
 const activityImageStyle = {
     filter: 'brightness(30%)'
@@ -39,7 +40,7 @@ export default observer(function ActivityDetailedHeader({activity}: Props)
                     />
                 }
 
-                <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={activityImageStyle}/>
+                <Image src={categoryImagePath(`${activity.category}.jpg`)} fluid style={activityImageStyle}/>
                 <Segment style={activityImageTextStyle} basic>
                     <Item.Group>
                         <Item>
@@ -52,7 +53,7 @@ export default observer(function ActivityDetailedHeader({activity}: Props)
                                 <p>{formatDate(activity.date, "dd MMM yyyy")}</p>
                                 <p>
                                     Hosted by <strong>
-                                    <Link to={`/profiles/${activity.hostUserName}`}>
+                                    <Link to={profilePath(activity.hostUserName)}>
                                         {activity.host?.displayName}
                                     </Link>
                                 </strong>
