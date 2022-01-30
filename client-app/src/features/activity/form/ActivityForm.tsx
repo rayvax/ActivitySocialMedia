@@ -3,22 +3,23 @@ import {Button, Header, Segment}    from "semantic-ui-react";
 import {useStore}                   from "../../../app/stores/store";
 import {observer}                     from "mobx-react-lite";
 import {ActivityFormValues}          from "../../../app/models/activity";
-import {useParams, useHistory, Link} from "react-router-dom";
-import LoadingComponent              from "../../../app/layout/LoadingComponent";
-import {v4 as uuid}                  from "uuid";
-import {Formik, Form}                from "formik";
-import * as Yup                      from "yup"
-import TextInput                     from "../../../app/common/form/TextInput"
-import TextAreaInput                 from "../../../app/common/form/TextAreaInput";
-import SelectInput                   from "../../../app/common/form/SelectInput";
-import {categoryOptions}             from "../../../app/common/options/сategoryOptions";
+import {useParams, useHistory, Link}  from "react-router-dom";
+import LoadingComponent               from "../../../app/layout/LoadingComponent";
+import {v4 as uuid}                   from "uuid";
+import {Formik, Form}                 from "formik";
+import * as Yup                       from "yup"
+import TextInput                      from "../../../app/common/form/TextInput"
+import TextAreaInput                  from "../../../app/common/form/TextAreaInput";
+import SelectInput                    from "../../../app/common/form/SelectInput";
+import {categoryOptions}              from "../../../app/common/options/сategoryOptions";
 import DateInput                      from "../../../app/common/form/DateInput";
 import {activitiesPath, activityPath} from "../../../utils/paths";
+import ConfirmModal                   from "../../../app/common/modal/ConfirmModal";
 
 export default observer(function ActivityForm()
 {
-    const { activityStore } = useStore();
-    const {loadActivity} = activityStore;
+    const { activityStore, modalStore } = useStore();
+    const {loadActivity, deleteActivity, selectedActivity, isLoading} = activityStore;
     const {id} = useParams<{ id: string }>();
     const history = useHistory();
 
@@ -37,10 +38,8 @@ export default observer(function ActivityForm()
     {
         if (id)
         {
-
             loadActivity(id)
                 .then(activity => setActivity(new ActivityFormValues(activity)))
-
         }
     }, [id, loadActivity])
 
@@ -59,6 +58,26 @@ export default observer(function ActivityForm()
         }
 
         history.push(activityPath(activity.id));
+    }
+
+    function onDeleteClick()
+    {
+        modalStore.openModal(
+            <ConfirmModal
+                headerContent={"Are you sure you want to delete this activity?"}
+                confirmCallback={handleDeleteActivity}
+                cancelCallback={modalStore.closeModal}
+            />
+        )
+    }
+
+    function handleDeleteActivity()
+    {
+        deleteActivity(selectedActivity!.id)
+            .then(() => {
+                modalStore.closeModal();
+                history.push(activitiesPath);
+            })
     }
 
     if (activityStore.isLoadingInitial)
@@ -101,17 +120,26 @@ export default observer(function ActivityForm()
                             <TextInput placeholder={"Venue"}
                                        name={"venue"}
                             />
-
+                            {id &&
+                                <Button onClick={onDeleteClick}
+                                        type={'button'}
+                                        floated={'right'}
+                                        icon={'trash'}
+                                        basic
+                                        disabled={isSubmitting}
+                                        color={'red'}
+                                />
+                            }
                             <Button type={'submit'}
                                     content={'Submit'}
                                     positive
-                                    floated={"right"}
+                                    floated={"left"}
                                     loading={isSubmitting}
                                     disabled={isSubmitting || !dirty || !isValid} />
                             <Button as={Link}
                                     to={activitiesPath}
-                                    floated='right'
-                                    type='button'
+                                    floated={'left'}
+                                    type={'button'}
                                     content='Cancel'
                                     disabled={isSubmitting}/>
                         </Form>

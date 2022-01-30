@@ -1,11 +1,11 @@
-import {observer}                                    from 'mobx-react-lite';
-import React                                         from 'react'
-import {Button, Header, Item, Segment, Image, Label} from 'semantic-ui-react'
-import {Activity}                                    from "../../../app/models/activity";
-import {Link}                                        from "react-router-dom";
-import {formatDate}                                  from "../../../utils/date-fns-utils";
-import {useStore}                       from "../../../app/stores/store";
-import {categoryImagePath, profilePath} from "../../../utils/paths";
+import {observer}                                           from 'mobx-react-lite';
+import React                                                from 'react'
+import {Button, Header, Item, Segment, Image, Label}        from 'semantic-ui-react'
+import {Activity}                                           from "../../../app/models/activity";
+import {Link}                                               from "react-router-dom";
+import {formatDate}                                         from "../../../utils/date-fns-utils";
+import {useStore}                                           from "../../../app/stores/store";
+import {categoryImagePath, manageActivityPath, profilePath} from "../../../utils/paths";
 
 const activityImageStyle = {
     filter: 'brightness(30%)'
@@ -27,7 +27,11 @@ interface Props
 
 export default observer(function ActivityDetailedHeader({activity}: Props)
 {
-    const {activityStore: {updateAttendance, isLoading, cancelSelectedActivityToggle}} = useStore();
+    const {activityStore} = useStore();
+    const {
+        updateAttendance, isLoading,
+        cancelSelectedActivityToggle
+    } = activityStore
 
     return (
         <Segment.Group>
@@ -75,13 +79,12 @@ export default observer(function ActivityDetailedHeader({activity}: Props)
                             {activity.isCancelled ? "Re-activate activity" : "Cancel activity"}
                         </Button>
                         <Button as={Link}
-                                to={`/manage/${activity.id}`}
+                                to={manageActivityPath(activity.id)}
                                 disabled={activity.isCancelled}
                                 color='orange'
                                 floated='right'
-                        >
-                            Manage Event
-                        </Button>
+                                content={'Manage Event'}
+                        />
                     </>
                 ) : activity.isGoing ? (
                     <Button onClick={updateAttendance} loading={isLoading}>

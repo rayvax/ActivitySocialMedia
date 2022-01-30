@@ -17,7 +17,8 @@ export const accountPath = '/account';
 export const loginPath = '/account/login';
 export const registerPath = '/account/register';
 
-export const profilePath = (userName: string) => `/profiles/${userName}`;
+export const allProfilesPath = '/profiles';
+export const profilePath = (userName: string) => allProfilesPath + `/${userName}`;
 
 export const photosPath = (id: string) => `/photos/${id}`;
 export const setMainPhotoPath = (id: string) => photosPath(id) + '/setmain';

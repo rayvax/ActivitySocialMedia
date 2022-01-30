@@ -14,7 +14,8 @@ import {
 
 export default observer(function NavBar()
 {
-    const {userStore: {user, logout}} = useStore();
+    const {userStore} = useStore();
+    const {logout, currentUserName, currentImage, currentDisplayName} = userStore;
 
     return (
         <Menu inverted fixed={"top"}>
@@ -29,11 +30,11 @@ export default observer(function NavBar()
                     <Button as={NavLink} to={createActivityPath} content="Create Activity" positive/>
                 </MenuItem>
                 <MenuItem position={"right"}>
-                    <Image src={user?.image || profileImagePlaceholder} avatar spaced={"right"} />
-                    <Dropdown pointing={'top left'} text={user?.displayName}>
+                    <Image src={currentImage || profileImagePlaceholder} avatar spaced={"right"} />
+                    <Dropdown pointing={'top left'} text={currentDisplayName}>
                         <Dropdown.Menu>
                             <Dropdown.Item as={Link}
-                                           to={profilePath(user?.userName || "unknown")}
+                                           to={profilePath(currentUserName || "unknown")}
                                            content={'My profile'}
                                            icon={'user'} />
                             <Dropdown.Item onClick={logout}

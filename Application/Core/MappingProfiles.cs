@@ -1,8 +1,9 @@
 using System.Linq;
 using Application.Activities;
 using Application.Activities.DTOs;
-using AutoMapper;
+using Application.Profiles;
 using Domain;
+using Profile = AutoMapper.Profile;
 
 namespace Application.Core
 {
@@ -23,6 +24,8 @@ namespace Application.Core
 
             CreateMap<AppUser, Profiles.Profile>()
                 .ForMember(p => p.Image, opt => opt.MapFrom(u => u.Photos.FirstOrDefault(photo => photo.IsMain).Url));
+
+            CreateMap<ProfileEditInfo, AppUser>();
         }
     }
 }

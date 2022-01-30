@@ -25,7 +25,7 @@ export default observer(function ActivityListItemAttendees({attendees}: Props)
                                </List.Item>
                            }
                     >
-                        <ProfileCard profile={attendee}/>
+                        <ProfileCard profile={attendee} />
                     </Popup>
                 ))}
         </List>

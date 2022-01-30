@@ -7,14 +7,14 @@ import {User, UserFormValues} from "../models/user";
 import {
     accountPath,
     activitiesPath,
-    activityPath,
+    activityPath, allProfilesPath,
     attendActivityPath,
     loginPath,
     photosPath,
     profilePath,
     registerPath, setMainPhotoPath
-} from "../../utils/paths";
-import Profile, {Photo}       from "../models/profile";
+}                                          from "../../utils/paths";
+import Profile, {Photo, ProfileFormValues} from "../models/profile";
 
 const sleep = (delay: number) =>
 {
@@ -124,8 +124,9 @@ const Profiles = {
             headers: {'Content-type': 'multipart/form-data'}
         })
     },
-    setMainImage: (id: string) => requests.post(setMainPhotoPath(id), {}),
-    deleteImage: (id: string) => requests.delete(photosPath(id))
+    setMainImage: (id: string) => requests.post<void>(setMainPhotoPath(id), {}),
+    deleteImage: (id: string) => requests.delete<void>(photosPath(id)),
+    updateProfile: (profile: ProfileFormValues) => requests.put<void>(allProfilesPath, profile)
 }
 
 const agent = {

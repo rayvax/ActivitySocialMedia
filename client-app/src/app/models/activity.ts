@@ -44,7 +44,7 @@ export class ActivityFormValues
         }
     }
 
-    toActivity = () =>
+    public toActivity()
     {
         return {
             id: this.id,

@@ -3,15 +3,13 @@ import {makeAutoObservable, runInAction} from "mobx";
 import agent        from "../agent/agent";
 import {formatDate} from "../../utils/date-fns-utils";
 import {store}      from "./store";
-import {ProfileWrapper}                  from "../models/profile";
 
 export default class ActivityStore
 {
-    private _activities = new Map<string, Activity>(); //key - id, value - activity
+    public _activities = new Map<string, Activity>(); //key - id, value - activity
     private _selectedActivity: Activity | undefined = undefined;
     private _isLoadingInitial = false;
     private _isLoading = false; //creating, editing, deleting activity
-
 
     public constructor()
     {
@@ -93,16 +91,16 @@ export default class ActivityStore
 
     public createActivity = async (activityFormValues: ActivityFormValues) =>
     {
-        const user = store.userStore.user;
-        const attendee = new ProfileWrapper(user!);
+        const userName = store.userStore.currentUserName;
+        const attendee = store.userStore.getProfileWrapper();
 
         await this.runInLoading(async () =>
         {
             await agent.Activities.create(activityFormValues);
 
             const newActivity = activityFormValues.toActivity();
-            newActivity.hostUserName = user!.userName;
-            newActivity.attendees = [attendee];
+            newActivity.hostUserName = userName!;
+            newActivity.attendees = [attendee!];
 
             this.setActivity(newActivity)
             runInAction(() => this._selectedActivity = newActivity)
@@ -142,11 +140,11 @@ export default class ActivityStore
 
     private setActivity = (activity: Activity) =>
     {
-        const user = store.userStore.user;
-        if(user)
+        const userName = store.userStore.currentUserName;
+        if(userName)
         {
-            activity.isGoing = activity.attendees?.some(p => p.userName === user.userName)
-            activity.isHosting = activity.hostUserName === user.userName;
+            activity.isGoing = activity.attendees?.some(p => p.userName === userName)
+            activity.isHosting = activity.hostUserName === userName;
             activity.host = activity.attendees?.find(p => p.userName === activity.hostUserName);
         }
 
@@ -156,7 +154,7 @@ export default class ActivityStore
 
     public updateAttendance = async () =>
     {
-        const user = store.userStore.user;
+        const userName = store.userStore.currentUserName;
 
         await this.runInLoading(async () =>
         {
@@ -168,15 +166,15 @@ export default class ActivityStore
                {
                    //cancelled the attendance
                    this.selectedActivity.attendees = this.selectedActivity
-                            .attendees?.filter(u => u.userName !== user?.userName)
+                            .attendees?.filter(u => u.userName !== userName)
 
                    this.selectedActivity!.isGoing = false;
                }
                else
                {
                    //joined activity
-                   const attendee = new ProfileWrapper(user!);
-                   this.selectedActivity?.attendees?.push(attendee);
+                   const attendee = store.userStore.getProfileWrapper()
+                   this.selectedActivity?.attendees?.push(attendee!);
                    this.selectedActivity!.isGoing = true;
                }
 

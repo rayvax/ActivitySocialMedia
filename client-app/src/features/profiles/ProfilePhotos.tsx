@@ -1,28 +1,26 @@
-import React, {SyntheticEvent, useState} from "react";
-import {observer}                        from "mobx-react-lite";
+import React, {SyntheticEvent, useState}   from "react";
+import {observer}                          from "mobx-react-lite";
 import {Card, Header, Image, Grid, Button} from "semantic-ui-react";
 import Profile, {Photo}                    from "../../app/models/profile";
 import {useStore}                          from "../../app/stores/store";
 import PhotoUploadWidget                   from "../../app/common/imageUploader/PhotoUploadWidget";
+import NotFound                            from "../errors/NotFound";
 
-interface Props
+export default observer(function ProfilePhotos()
 {
-    profile: Profile;
-}
+    const [inAddPhotoMode, setInAddPhotoMode] = useState(false);
+    const [target, setTarget] = useState<string | null>(null);
 
-export default observer(function ProfilePhotos({profile}: Props)
-{
     const {profileStore} = useStore();
-    const {photos} = profile;
     const {
-        isCurrentUser,
+        profile, isCurrentUser,
         uploadPhoto, isUploading,
         setMainImage, isLoading,
         deleteImage
     } = profileStore;
 
-    const [inAddPhotoMode, setInAddPhotoMode] = useState(false);
-    const [target, setTarget] = useState<string | null>(null);
+    if(!profile)
+        return <NotFound />
 
     function handlePhotoUpload(file: Blob)
     {
@@ -63,7 +61,7 @@ export default observer(function ProfilePhotos({profile}: Props)
                     <PhotoUploadWidget uploadPhoto={handlePhotoUpload} loading={isUploading}/>
                 ) : (
                     <Card.Group itemsPerRow={5}>
-                        {photos?.map(photo =>
+                        {profile.photos?.map(photo =>
                             (
                                 <Card key={photo.id}>
                                     <Image src={photo.url}/>

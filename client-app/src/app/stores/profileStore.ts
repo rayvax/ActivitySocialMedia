@@ -1,6 +1,6 @@
-import {makeAutoObservable, runInAction} from "mobx";
-import Profile, {Photo}                  from "../models/profile";
-import agent                             from "../agent/agent";
+import {makeAutoObservable, runInAction}   from "mobx";
+import Profile, {Photo, ProfileFormValues} from "../models/profile";
+import agent                               from "../agent/agent";
 import {store}                           from "./store";
 
 export default class ProfileStore
@@ -37,10 +37,10 @@ export default class ProfileStore
 
     public get isCurrentUser()
     {
-        const user = store.userStore.user;
-        if(user && this._profile)
+        const currentUserName = store.userStore.currentUserName;
+        if(this._profile)
         {
-            return user.userName === this._profile.userName;
+            return currentUserName === this._profile.userName;
         }
 
         return false;
@@ -83,7 +83,7 @@ export default class ProfileStore
                 {
                     this._profile.photos?.push(photo);
 
-                    if(photo.isMain && store.userStore.user)
+                    if(photo.isMain)
                     {
                         store.userStore.setCurrentUserMainImage(photo.url);
                         this._profile.image = photo.url;
@@ -107,8 +107,7 @@ export default class ProfileStore
         if(currentMain?.id === image.id)
             return;
 
-        this._isLoading = true;
-        try
+        await this.runInLoading(async () =>
         {
             await agent.Profiles.setMainImage(image.id);
 
@@ -122,15 +121,7 @@ export default class ProfileStore
                     this._profile.photos.find(p => p.id === image.id)!.isMain = true;
                 }
             })
-        }
-        catch (error)
-        {
-            console.log(error);
-        }
-        finally
-        {
-            runInAction(() => this._isLoading = false);
-        }
+        })
     }
 
     public deleteImage = async (image: Photo) =>
@@ -138,9 +129,7 @@ export default class ProfileStore
         if(!this._profile?.photos?.some(p => p.id === image.id))
             return;
 
-        this._isLoading = true;
-
-        try
+        await this.runInLoading( async () =>
         {
             await agent.Profiles.deleteImage(image.id);
 
@@ -151,14 +140,47 @@ export default class ProfileStore
                     this._profile.photos = this._profile.photos?.filter(p => p.id !== image.id);
                 }
             })
+        })
+    }
+
+    public updateProfile = async (profileValues: ProfileFormValues) =>
+    {
+        await this.runInLoading(async () =>
+        {
+            await agent.Profiles.updateProfile(profileValues);
+
+            store.userStore.setDisplayName(profileValues.displayName);
+            runInAction(() => {
+                if(this._profile)
+                {
+                    this._profile.displayName = profileValues.displayName;
+                    this._profile.about = profileValues.about;
+                }
+            })
+        })
+    }
+
+
+    private runInLoading = async (fn: () => Promise<void>) =>
+    {
+        this.setIsLoading(true);
+
+        try
+        {
+            return await fn();
         }
         catch (error)
         {
-            console.log(error);
+            console.error(error)
         }
         finally
         {
-            runInAction(() => this._isLoading = false);
+            this.setIsLoading(false);
         }
+    }
+
+    private setIsLoading(value: boolean)
+    {
+        this._isLoading = value;
     }
 }

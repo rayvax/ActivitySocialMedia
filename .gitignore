@@ -458,3 +458,5 @@ $RECYCLE.BIN/
 
 [Ss]tudent[Aa]ssets/
 appsettings.json
+/API/dev.bat
+/start_front.bat
