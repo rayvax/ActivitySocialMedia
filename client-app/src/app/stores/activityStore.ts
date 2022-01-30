@@ -49,6 +49,16 @@ export default class ActivityStore
         return this._isLoading;
     }
 
+    public clearSelectedActivity()
+    {
+        this._selectedActivity = undefined;
+    }
+
+    public hasActivity = (activityId: string) =>
+    {
+        return this._activities.has(activityId);
+    }
+
     public setIsLoadingInitial = (value: boolean) => this._isLoadingInitial = value;
 
     public setIsLoading = (value: boolean) => this._isLoading = value;

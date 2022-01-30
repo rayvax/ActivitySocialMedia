@@ -14,26 +14,29 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "API", Version = "v1"}); });
             services.AddDbContext<DataContext>(optionsAction =>
             {
                 optionsAction.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(options =>
             {
-                options.AddPolicy("ReactClientCorsPolicy", policyBuilder =>
-                {
-                    policyBuilder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-                });
+                options.AddPolicy("ReactClientCorsPolicy",
+                    policyBuilder =>
+                    {
+                        policyBuilder
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .WithOrigins("http://localhost:3000");
+                    });
             });
             services.AddMediatR(typeof(Application.Activities.ActivityList).Assembly);
             services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, CloudinaryPhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+            services.AddSignalR();
 
             return services;
         }

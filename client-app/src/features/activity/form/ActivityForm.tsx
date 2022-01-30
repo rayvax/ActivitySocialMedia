@@ -19,7 +19,7 @@ import ConfirmModal                   from "../../../app/common/modal/ConfirmMod
 export default observer(function ActivityForm()
 {
     const { activityStore, modalStore } = useStore();
-    const {loadActivity, deleteActivity, selectedActivity, isLoading} = activityStore;
+    const {loadActivity, deleteActivity, selectedActivity} = activityStore;
     const {id} = useParams<{ id: string }>();
     const history = useHistory();
 

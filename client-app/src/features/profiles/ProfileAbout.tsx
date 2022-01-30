@@ -1,7 +1,6 @@
 import React, {useState}      from "react";
 import {observer}             from "mobx-react-lite";
 import {Button, Grid, Header} from "semantic-ui-react";
-import Profile                from "../../app/models/profile";
 import {useStore}             from "../../app/stores/store";
 import ProfileAboutEdit       from "./ProfileEditForm";
 import NotFound               from "../errors/NotFound";

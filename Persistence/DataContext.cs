@@ -9,6 +9,7 @@ namespace Persistence
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public DataContext(DbContextOptions options) : base(options)
         {
@@ -31,6 +32,11 @@ namespace Persistence
                 .HasOne(aa => aa.Activity)
                 .WithMany(activity => activity.Attendees)
                 .HasForeignKey(aa => aa.ActivityId);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.Activity)
+                .WithMany(a => a.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
