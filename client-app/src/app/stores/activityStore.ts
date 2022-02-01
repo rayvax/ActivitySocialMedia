@@ -208,6 +208,21 @@ export default class ActivityStore
         })
     }
 
+    public updateAttendeeFollowing = (userName: string) =>
+    {
+        this._activities.forEach(activity =>
+        {
+            activity.attendees.forEach(attendee =>
+            {
+                if(attendee.userName === userName)
+                {
+                    attendee.following ? attendee.followersCount-- : attendee.followersCount++;
+                    attendee.following = !attendee.following;
+                }
+            })
+        })
+    }
+
     private getActivity = (id: string) =>
     {
         return this._activities.get(id);

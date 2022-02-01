@@ -81,7 +81,7 @@ export default observer(function ActivityDetailedChat({activityId}: Props)
                                 </Form>
                             )}
                     </Formik>
-                    
+
                     {commentStore.comments.map(comment =>
                         (
                             <Comment key={comment.id}>

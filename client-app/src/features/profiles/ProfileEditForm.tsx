@@ -1,6 +1,6 @@
 import {Form, Formik}               from "formik";
 import React                        from "react";
-import Profile, {ProfileFormValues} from "../../app/models/profile";
+import {Profile, ProfileFormValues} from "../../app/models/profile";
 import {observer}                   from "mobx-react-lite";
 import TextInput                    from "../../app/common/form/TextInput";
 import TextAreaInput                from "../../app/common/form/TextAreaInput";

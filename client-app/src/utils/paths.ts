@@ -22,3 +22,6 @@ export const profilePath = (userName: string) => allProfilesPath + `/${userName}
 
 export const photosPath = (id: string) => `/photos/${id}`;
 export const setMainPhotoPath = (id: string) => photosPath(id) + '/setmain';
+
+export const followPath = (userName: string) => `/follow/${userName}`;
+export const followListPath = (userName: string, predicate: string) => followPath(userName) + `?predicate=${predicate}`

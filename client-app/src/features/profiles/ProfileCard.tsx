@@ -1,8 +1,10 @@
 import React                                  from "react";
-import Profile                                from "../../app/models/profile";
+import {Profile}                              from "../../app/models/profile";
 import {Card, Icon, Image}                    from "semantic-ui-react";
 import {Link}                                 from "react-router-dom";
 import {profileImagePlaceholder, profilePath} from "../../utils/paths";
+import FollowButton                           from "./FollowButton";
+import {observer}                             from "mobx-react-lite";
 
 interface Props
 {
@@ -10,7 +12,7 @@ interface Props
     aboutLength?: number;
 }
 
-export default function ProfileCard({profile, aboutLength = 40}: Props)
+export default observer(function ProfileCard({profile, aboutLength = 40}: Props)
 {
     function truncate(text: string | undefined)
     {
@@ -31,8 +33,9 @@ export default function ProfileCard({profile, aboutLength = 40}: Props)
             </Card.Content>
             <Card.Content extra>
                 <Icon name={"user"}/>
-                20 followers
+                {profile.followersCount} followers
             </Card.Content>
+            <FollowButton profile={profile} />
         </Card>
     )
-}
+})

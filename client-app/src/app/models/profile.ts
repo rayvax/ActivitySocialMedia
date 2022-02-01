@@ -1,20 +1,20 @@
 import {User} from "./user";
 
-export default interface Profile
+export interface Profile
 {
     userName: string;
     displayName: string;
     about?: string;
     image?: string;
     photos?: Photo[];
+
+    following: boolean; //whether current user following this one
+    followersCount: number;
+    followingCount: number;
 }
 
-export class ProfileWrapper implements Profile
+export class Profile implements Profile
 {
-    userName: string;
-    displayName: string;
-    image?: string;
-
     constructor(user: User)
     {
         this.userName = user.userName;
@@ -28,6 +28,11 @@ export interface Photo
     id: string;
     url: string;
     isMain: boolean;
+}
+
+export interface FollowingStatus
+{
+    following: boolean;
 }
 
 export class ProfileFormValues

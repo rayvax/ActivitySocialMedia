@@ -12,12 +12,17 @@ export default observer(function ProfilePage()
     const {userName} = useParams<{ userName: string }>();
 
     const {profileStore} = useStore();
-    const {profile, loadProfile, isLoadingProfile} = profileStore;
+    const {profile, loadProfile, isLoadingProfile, isCurrentUser} = profileStore;
 
     useEffect(() =>
     {
         loadProfile(userName);
-    }, [loadProfile, userName])
+
+        return () =>
+        {
+            profileStore.activeTab = 0;
+        }
+    }, [loadProfile, userName, profileStore])
 
     if (isLoadingProfile)
         return <LoadingComponent content={"Loading profile..."}/>
@@ -27,7 +32,7 @@ export default observer(function ProfilePage()
             <Grid.Column width={'16'}>
                 {profile &&
                     <>
-                        <ProfileHeader profile={profile} />
+                        <ProfileHeader profile={profile} isCurrentUser={isCurrentUser} />
                         <ProfileContent />
                     </>
                 }

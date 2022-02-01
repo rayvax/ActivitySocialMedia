@@ -3,8 +3,8 @@ import {makeAutoObservable, runInAction} from "mobx";
 import agent                             from "../agent/agent";
 import {store}                           from "./store";
 import {history}                         from "../../index";
-import {activitiesPath, homePagePath}    from "../../utils/paths";
-import {ProfileWrapper}                  from "../models/profile";
+import {activitiesPath, homePagePath} from "../../utils/paths";
+import {Profile}                      from "../models/profile";
 
 export default class UserStore
 {
@@ -37,7 +37,7 @@ export default class UserStore
 
     public getProfileWrapper = () =>
     {
-        return this.user ? new ProfileWrapper(this.user) : null;
+        return this.user ? new Profile(this.user) : null;
     }
 
     public login = async (credentials: UserFormValues) =>

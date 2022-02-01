@@ -8,13 +8,13 @@ import {
     accountPath,
     activitiesPath,
     activityPath, allProfilesPath,
-    attendActivityPath,
+    attendActivityPath, followListPath, followPath,
     loginPath,
     photosPath,
     profilePath,
     registerPath, setMainPhotoPath
-}                                          from "../../utils/paths";
-import Profile, {Photo, ProfileFormValues} from "../models/profile";
+}                                                           from "../../utils/paths";
+import {Profile, Photo, ProfileFormValues, FollowingStatus} from "../models/profile";
 
 const sleep = (delay: number) =>
 {
@@ -124,9 +124,15 @@ const Profiles = {
             headers: {'Content-type': 'multipart/form-data'}
         })
     },
+
     setMainImage: (id: string) => requests.post<void>(setMainPhotoPath(id), {}),
     deleteImage: (id: string) => requests.delete<void>(photosPath(id)),
-    updateProfile: (profile: ProfileFormValues) => requests.put<void>(allProfilesPath, profile)
+    updateProfile: (profile: ProfileFormValues) => requests.put<void>(allProfilesPath, profile),
+
+    updateFollowing: (userName: string) => requests.post<FollowingStatus>(followPath(userName), {}),
+    getFollowers: (userName: string) => requests.get<Profile[]>(followListPath(userName, 'followers')),
+    getFollowings: (userName: string, predicate: string) =>
+        requests.get<Profile[]>((followListPath(userName, predicate)))
 }
 
 const agent = {

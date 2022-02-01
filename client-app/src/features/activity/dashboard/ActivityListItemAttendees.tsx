@@ -1,14 +1,19 @@
-import React                from 'react';
-import {observer}           from "mobx-react-lite";
-import {List, Image, Popup} from "semantic-ui-react";
-import Profile              from "../../../app/models/profile";
-import {Link}               from "react-router-dom";
+import React                                  from 'react';
+import {observer}                             from "mobx-react-lite";
+import {List, Image, Popup}                   from "semantic-ui-react";
+import {Profile}                              from "../../../app/models/profile";
+import {Link}                                 from "react-router-dom";
 import ProfileCard                            from "../../profiles/ProfileCard";
 import {profileImagePlaceholder, profilePath} from "../../../utils/paths";
 
 interface Props
 {
     attendees: Profile[];
+}
+
+const followingImageStyles = {
+    borderColor: 'orange',
+    borderWidth: 3
 }
 
 export default observer(function ActivityListItemAttendees({attendees}: Props)
@@ -21,11 +26,16 @@ export default observer(function ActivityListItemAttendees({attendees}: Props)
                            hoverable
                            trigger={
                                <List.Item key={attendee.userName} as={Link} to={profilePath(attendee.userName)}>
-                                   <Image src={attendee.image || profileImagePlaceholder} size={"mini"} circular/>
+                                   <Image src={attendee.image || profileImagePlaceholder}
+                                          size={"mini"}
+                                          circular
+                                          bordered
+                                          style={attendee.following ? followingImageStyles : null}
+                                   />
                                </List.Item>
                            }
                     >
-                        <ProfileCard profile={attendee} />
+                        <ProfileCard profile={attendee}/>
                     </Popup>
                 ))}
         </List>
