@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Activities.DTOs;
 using Application.Core;
+using Application.Core.Pagination;
 using Application.Inferfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -14,9 +16,12 @@ namespace Application.Activities
 {
     public class ActivityList
     {
-        public class Query : IRequest<Result<List<ActivityDto>>> {}
+        public class Query : IRequest<Result<PagedList<ActivityDto>>>
+        {
+            public PagingParams PagingParams { get; set; }
+        }
 
-        public class Handler : IRequestHandler<Query, Result<List<ActivityDto>>>
+        public class Handler : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
         {
             private readonly DataContext _dataContext;
             private readonly IMapper _mapper;
@@ -29,14 +34,16 @@ namespace Application.Activities
                 _userAccessor = userAccessor;
             }
 
-            public async Task<Result<List<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PagedList<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activityDtos = await _dataContext.Activities
-                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, 
+                var query = _dataContext.Activities
+                    .OrderBy(d => d.Date)
+                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider,
                         new {currentUserName = _userAccessor.GetUserName()})
-                    .ToListAsync();
+                    .AsQueryable();
 
-                return Result<List<ActivityDto>>.Success(activityDtos);
+                var list = await PagedList<ActivityDto>.CreateAsync(query, request.PagingParams.PageNumber, request.PagingParams.PageSize);
+                return Result<PagedList<ActivityDto>>.Success(list);
             }
         }
     }

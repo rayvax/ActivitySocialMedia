@@ -1,8 +1,9 @@
 import {Activity, ActivityFormValues}    from "../models/activity";
 import {makeAutoObservable, runInAction} from "mobx";
-import agent        from "../agent/agent";
-import {formatDate} from "../../utils/date-fns-utils";
-import {store}      from "./store";
+import agent                             from "../agent/agent";
+import {formatDate}                      from "../../utils/date-fns-utils";
+import {store}                    from "./store";
+import {Pagination, PagingParams} from "../models/pagination";
 
 export default class ActivityStore
 {
@@ -10,6 +11,8 @@ export default class ActivityStore
     private _selectedActivity: Activity | undefined = undefined;
     private _isLoadingInitial = false;
     private _isLoading = false; //creating, editing, deleting activity
+    private _pagination: Pagination | null = null;
+    private _pagingParams = new PagingParams();
 
     public constructor()
     {
@@ -49,6 +52,20 @@ export default class ActivityStore
         return this._isLoading;
     }
 
+    public get axiosPagingParams()
+    {
+        const params = new URLSearchParams();
+        params.append('pageNumber', this._pagingParams.pageNumber.toString());
+        params.append('pageSize', this._pagingParams.pageSize.toString());
+
+        return params;
+    }
+
+    public get pagination()
+    {
+        return this._pagination;
+    }
+
     public clearSelectedActivity()
     {
         this._selectedActivity = undefined;
@@ -63,16 +80,21 @@ export default class ActivityStore
 
     public setIsLoading = (value: boolean) => this._isLoading = value;
 
+    public setPagination = (value: Pagination) => this._pagination = value;
+
+    public setPagingParams = (value: PagingParams) => this._pagingParams = value;
+
     public loadActivities = async () =>
     {
         await this.loadInitial(async () =>
         {
-            const responseActivities = await agent.Activities.getList();
+            const result = await agent.Activities.getList(this.axiosPagingParams);
 
-            responseActivities.forEach(activity =>
+            result.data.forEach(activity =>
             {
                 this.setActivity(activity);
             });
+            this.setPagination(result.pagination);
         })
     }
 

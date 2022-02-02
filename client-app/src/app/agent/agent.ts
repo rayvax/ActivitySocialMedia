@@ -15,6 +15,7 @@ import {
     registerPath, setMainPhotoPath
 }                                                           from "../../utils/paths";
 import {Profile, Photo, ProfileFormValues, FollowingStatus} from "../models/profile";
+import {PaginatedResult}                                    from "../models/pagination";
 
 const sleep = (delay: number) =>
 {
@@ -38,6 +39,13 @@ axios.interceptors.request.use(config =>
 axios.interceptors.response.use(async (response) =>
     {
         await sleep(1000);
+        const pagination = response.headers['pagination'];
+        if(pagination)
+        {
+            response.data = new PaginatedResult<any>(response.data, JSON.parse(pagination));
+            return response as AxiosResponse<PaginatedResult<any>>;
+        }
+
         return response;
     },
     (error: AxiosError) =>
@@ -98,7 +106,8 @@ const requests = {
 }
 
 const Activities = {
-    getList: () => requests.get<Activity[]>(activitiesPath),
+    getList: (params: URLSearchParams) => axios.get<PaginatedResult<Activity[]>>(activitiesPath, {params})
+        .then(responseBody),
     getActivity: (id: string) => requests.get<Activity>(activityPath(id)),
     create: (activity: ActivityFormValues) => requests.post<void>(activitiesPath, activity),
     edit: (activity: ActivityFormValues) => requests.put<void>(activityPath(activity.id || "unknown"), activity),
