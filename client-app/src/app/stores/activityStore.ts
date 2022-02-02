@@ -1,6 +1,6 @@
-import {Activity, ActivityFormValues}    from "../models/activity";
-import {makeAutoObservable, runInAction} from "mobx";
-import agent                             from "../agent/agent";
+import {Activity, ActivityFormValues}              from "../models/activity";
+import {makeAutoObservable, reaction, runInAction} from "mobx";
+import agent                                       from "../agent/agent";
 import {formatDate}                      from "../../utils/date-fns-utils";
 import {store}                    from "./store";
 import {Pagination, PagingParams} from "../models/pagination";
@@ -13,10 +13,19 @@ export default class ActivityStore
     private _isLoading = false; //creating, editing, deleting activity
     private _pagination: Pagination | null = null;
     private _pagingParams = new PagingParams();
+    private _predicates = new Map().set('all', true);
 
     public constructor()
     {
         makeAutoObservable(this);
+
+        reaction(() => this._predicates.keys(),
+            () =>
+            {
+                this._pagingParams = new PagingParams();
+                this._activities.clear();
+                this.loadActivities();
+            })
     }
 
     public get activitiesByDate()
@@ -58,12 +67,29 @@ export default class ActivityStore
         params.append('pageNumber', this._pagingParams.pageNumber.toString());
         params.append('pageSize', this._pagingParams.pageSize.toString());
 
+        this._predicates.forEach((value, key) =>
+        {
+            if(key === 'startDate')
+            {
+                params.append(key, (value as Date).toISOString());
+            }
+            else
+            {
+                params.append(key, value);
+            }
+        })
+
         return params;
     }
 
     public get pagination()
     {
         return this._pagination;
+    }
+
+    public get predicates()
+    {
+        return this._predicates;
     }
 
     public clearSelectedActivity()
@@ -83,6 +109,29 @@ export default class ActivityStore
     public setPagination = (value: Pagination) => this._pagination = value;
 
     public setPagingParams = (value: PagingParams) => this._pagingParams = value;
+
+    public setPredicate = (predicate: string, value: string | Date) =>
+    {
+        const resetParams = () =>
+        {
+            this._predicates.forEach((value, key) =>
+            {
+                if(key != 'startDate')
+                    this._predicates.delete(key);
+            })
+        }
+
+        if(predicate === 'startDate')
+        {
+            this._predicates.delete(predicate); // for MobX reaction
+        }
+        else
+        {
+            resetParams();
+        }
+
+        this._predicates.set(predicate, value);
+    }
 
     public loadActivities = async () =>
     {
