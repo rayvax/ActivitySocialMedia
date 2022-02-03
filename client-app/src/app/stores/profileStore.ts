@@ -19,13 +19,6 @@ export enum ActiveTab
     Following,
 }
 
-export enum EventsActiveTab
-{
-    Future,
-    Past,
-    Hosting
-}
-
 export default class ProfileStore
 {
     private _profile: Profile | null = null;
@@ -37,7 +30,6 @@ export default class ProfileStore
     private _followings: Profile[] = [];
     private _isLoadingFollowers = false;
 
-    private _eventsActiveTab: EventsActiveTab = 0;
     private _profileActivities: ProfileActivity[] = []
 
     constructor()
@@ -55,21 +47,6 @@ export default class ProfileStore
                 {
                     this._followings = [];
                 }
-                if(activeTab === ActiveTab.Events)
-                {
-                    this._eventsActiveTab = 0;
-                    this.loadProfileActivities(this.eventPredicate);
-                }
-                else
-                {
-                    this._profileActivities = [];
-                }
-            })
-
-        reaction(() => this._eventsActiveTab,
-            () =>
-            {
-                this.loadProfileActivities(this.eventPredicate);
             })
     }
 
@@ -119,27 +96,6 @@ export default class ProfileStore
         return false;
     }
 
-    private get eventPredicate()
-    {
-        let predicate: ProfileActivitiesPredicate;
-        switch(this._eventsActiveTab)
-        {
-            case EventsActiveTab.Hosting:
-                predicate = 'hosting';
-                break;
-
-            case EventsActiveTab.Future:
-                predicate = 'future';
-                break;
-
-            case EventsActiveTab.Past:
-                predicate = 'past';
-                break;
-        }
-
-        return predicate
-    }
-
     public get activeTab()
     {
         return this._activeTab;
@@ -148,11 +104,6 @@ export default class ProfileStore
     public set activeTab(value: any)
     {
         this._activeTab = value;
-    }
-
-    public set eventsActiveTab(value: any)
-    {
-        this._eventsActiveTab = value;
     }
 
     loadProfile = async (userName: string) =>
@@ -312,26 +263,7 @@ export default class ProfileStore
         })
     }
 
-    private loadFollowings = async (predicate: FollowingsPredicate) =>
-    {
-        this._isLoadingFollowers = true;
-
-        try
-        {
-            const followings = await agent.Profiles.getFollowings(this._profile?.userName!, predicate);
-            runInAction(() => this._followings = followings)
-        }
-        catch (error)
-        {
-            console.error(error)
-        }
-        finally
-        {
-            runInAction(() => this._isLoadingFollowers = false);
-        }
-    }
-
-    private loadProfileActivities = (predicate: ProfileActivitiesPredicate | undefined) =>
+    public loadProfileActivities = (predicate: ProfileActivitiesPredicate | undefined) =>
     {
         if(!predicate)
             return;
@@ -350,6 +282,27 @@ export default class ProfileStore
                 runInAction(() => this._profileActivities = activities)
             }
         })
+    }
+
+    public clearProfileActivities = () => this._profileActivities = []
+
+    private loadFollowings = async (predicate: FollowingsPredicate) =>
+    {
+        this._isLoadingFollowers = true;
+
+        try
+        {
+            const followings = await agent.Profiles.getFollowings(this._profile?.userName!, predicate);
+            runInAction(() => this._followings = followings)
+        }
+        catch (error)
+        {
+            console.error(error)
+        }
+        finally
+        {
+            runInAction(() => this._isLoadingFollowers = false);
+        }
     }
 
     private runInLoading = async (fn: () => Promise<void>) =>

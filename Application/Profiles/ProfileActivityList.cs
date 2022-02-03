@@ -25,13 +25,11 @@ namespace Application.Profiles
         {
             private readonly DataContext _dataContext;
             private readonly IMapper _mapper;
-            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext dataContext, IMapper mapper, IUserAccessor userAccessor)
+            public Handler(DataContext dataContext, IMapper mapper)
             {
                 _dataContext = dataContext;
                 _mapper = mapper;
-                _userAccessor = userAccessor;
             }
             
             public async Task<Result<List<ProfileActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
@@ -51,6 +49,7 @@ namespace Application.Profiles
                         query = query.Where(a => a.Date < DateTime.UtcNow);
                         break;
                     default:
+                        //future
                         query = query.Where(a => a.Date >= DateTime.UtcNow);
                         break;
                 }

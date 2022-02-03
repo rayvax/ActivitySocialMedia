@@ -1,7 +1,8 @@
-import {ChatComment, ChatCommentFormValues} from "../models/comment";
-import {makeAutoObservable, runInAction}    from "mobx";
+import {ChatComment, ChatCommentFormValues}            from "../models/comment";
+import {makeAutoObservable, runInAction}               from "mobx";
 import {HubConnection, HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
-import {store}                                         from "./store";
+import {store}      from "./store";
+import {commentUrl} from "../../utils/paths";
 
 export default class CommentStore
 {
@@ -23,7 +24,7 @@ export default class CommentStore
         if (store.activityStore.hasActivity(activityId))
         {
             this._hubConnection = new HubConnectionBuilder()
-                .withUrl(`http://localhost:5000/chat?activityId=${activityId}`,
+                .withUrl(commentUrl(activityId),
                     {
                         accessTokenFactory: () => store.commonStore.token!
                     })

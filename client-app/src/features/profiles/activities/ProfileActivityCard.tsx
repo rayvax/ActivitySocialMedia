@@ -12,9 +12,11 @@ interface Props
 
 export default function ProfileActivityCard({activity}: Props)
 {
+    const now = new Date();
+
     return (
         <Card as={Link} to={activityPath(activity.id)}>
-            <Image src={categoryImagePath(`${activity.category}.jpg`)} disabled={activity.date < new Date()}/>
+            <Image src={categoryImagePath(`${activity.category}.jpg`)} disabled={activity.date < now}/>
             <Card.Content textAlign={'center'}>
                 <Card.Header>{activity.title}</Card.Header>
                 <Card.Meta>{formatDate(activity.date, "dd MMM")}</Card.Meta>

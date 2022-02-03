@@ -8,12 +8,12 @@ import {
     accountPath,
     activitiesPath,
     activityPath, allProfilesPath,
-    attendActivityPath, followListPath, followPath,
+    attendActivityPath, apiBaseUrl, followListPath, followPath,
     loginPath,
     photosPath, profileActivitiesPath,
     profilePath,
     registerPath, setMainPhotoPath
-}                        from "../../utils/paths";
+} from "../../utils/paths";
 import {
     Profile,
     Photo,
@@ -32,7 +32,7 @@ const sleep = (delay: number) =>
     })
 }
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = apiBaseUrl;
 
 axios.interceptors.request.use(config =>
 {
@@ -45,7 +45,9 @@ axios.interceptors.request.use(config =>
 
 axios.interceptors.response.use(async (response) =>
     {
-        await sleep(1000);
+        if(process.env.NODE_ENV === 'development')
+            await sleep(1000);
+
         const pagination = response.headers['pagination'];
         if(pagination)
         {

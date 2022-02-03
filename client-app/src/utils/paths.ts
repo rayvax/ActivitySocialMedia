@@ -28,3 +28,8 @@ export const followListPath = (userName: string, predicate: string) => followPat
 
 export const profileActivitiesPath = (userName: string, predicate: 'hosting' | 'future' | 'past') =>
     `/profiles/${userName}/activities?predicate=${predicate}`
+
+//urls
+export const apiBaseUrl = process.env.REACT_APP_API_URL;
+export const chatUrl = process.env.REACT_APP_CHAR_URL;
+export const commentUrl = (activityId: string) => chatUrl + `?activityId=${activityId}`;

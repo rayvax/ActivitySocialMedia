@@ -1,36 +1,49 @@
-import React                       from "react";
-import {Grid, Header, Loader, Tab} from "semantic-ui-react";
-import {observer}                  from "mobx-react-lite";
-import {useStore}                  from "../../../app/stores/store";
-import ProfileEventsList           from "./ProfileEventsList";
+import React, {SyntheticEvent, useEffect}          from "react";
+import {Card, Grid, Header, Loader, Tab, TabProps} from "semantic-ui-react";
+import {observer}                                  from "mobx-react-lite";
+import {useStore}                                  from "../../../app/stores/store";
+import {ProfileActivitiesPredicate}                from "../../../app/models/profile";
+import ProfileActivityCard                         from "./ProfileActivityCard";
+
+class Pane
+{
+    menuItem: string;
+    key: ProfileActivitiesPredicate;
+
+    constructor(menuItem: string, key: ProfileActivitiesPredicate)
+    {
+        this.menuItem = menuItem;
+        this.key = key;
+    }
+}
+
+const panes = [
+    new Pane('Future Events', 'future'),
+    new Pane('Past Events', 'past'),
+    new Pane('Hosting', 'hosting')
+]
 
 export default observer(function ProfileEvents()
 {
     const {profileStore} = useStore();
-    const {profileActivities, isLoading} = profileStore;
+    const {profileActivities, isLoading, loadProfileActivities, clearProfileActivities} = profileStore;
 
-    const panRender = () =>
-        <Tab.Pane>
-            {isLoading ? (
-                <Loader active={true}/>
-            ) : (
-                <ProfileEventsList activities={profileActivities}/>
-            )}
-        </Tab.Pane>;
-    const panes = [
+    useEffect(() =>
+    {
+        loadProfileActivities(panes[0].key)
+
+        return () =>
         {
-            menuItem: 'Future Events',
-            render: panRender
-        },
-        {
-            menuItem: 'Past Events',
-            render: panRender
-        },
-        {
-            menuItem: 'Hosting',
-            render: panRender
-        },
-    ]
+            clearProfileActivities()
+        };
+    }, [loadProfileActivities, clearProfileActivities])
+
+
+    function handleTabChange(event: SyntheticEvent, data: TabProps)
+    {
+        const index = data.activeIndex as number;
+        loadProfileActivities(panes[index].key);
+    }
 
     return (
         <Grid>
@@ -39,9 +52,22 @@ export default observer(function ProfileEvents()
             </Grid.Column>
             <Grid.Column width={16}>
                 <Tab panes={panes}
-                     menu={{secondary: true, pointing: true, fluid: true}}
-                     onTabChange={(e, data) => profileStore.eventsActiveTab = data.activeIndex}
+                     menu={{secondary: true, pointing: true}}
+                     onTabChange={handleTabChange}
+                     defaultActiveIndex={0}
+
                 />
+            </Grid.Column>
+            <Grid.Column width={16}>
+                {isLoading ? (
+                    <Loader active={true}/>
+                ) : (
+                    <Card.Group itemsPerRow={4}>
+                        {profileActivities.map(activity => (
+                            <ProfileActivityCard key={activity.id} activity={activity}/>
+                        ))}
+                    </Card.Group>
+                )}
             </Grid.Column>
         </Grid>
     )

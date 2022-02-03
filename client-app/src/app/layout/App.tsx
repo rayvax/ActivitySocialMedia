@@ -13,9 +13,9 @@ import {ToastContainer}   from "react-toastify";
 import NotFound           from "../../features/errors/NotFound";
 import ServerError        from "../../features/errors/ServerError";
 import {useStore}         from "../stores/store";
-import LoadingComponent   from "./LoadingComponent";
-import ModalContainer from "../common/modal/ModalContainer";
-import ProfilePage    from "../../features/profiles/main/ProfilePage";
+import LoadingComponent from "./LoadingComponent";
+import ModalContainer   from "../common/modal/ModalContainer";
+import ProfilePage      from "../../features/profiles/main/ProfilePage";
 import {
     activitiesPath,
     activityPath,
@@ -23,7 +23,8 @@ import {
     errorsPath, homePagePath,
     manageActivityPath, profilePath,
     serverErrorPath
-}                     from "../../utils/paths";
+}                       from "../../utils/paths";
+import PrivateRoute     from "./PrivateRoute";
 
 function App()
 {
@@ -57,15 +58,15 @@ function App()
                         <NavBar/>
                         <Container style={{marginTop: '7em'}}>
                             <Switch>
-                                <Route exact path={activitiesPath} component={ActivityDashboard}/>
-                                <Route path={activityPath(':id')} component={ActivityDetails}/>
-                                <Route key={location.key}
+                                <PrivateRoute exact path={activitiesPath} component={ActivityDashboard}/>
+                                <PrivateRoute path={activityPath(':id')} component={ActivityDetails}/>
+                                <PrivateRoute key={location.key}
                                        path={[createActivityPath, manageActivityPath(':id')]}
                                        component={ActivityForm}/>
-                                <Route path={profilePath(':userName')} component={ProfilePage}/>
-                                <Route path={errorsPath} component={TestError}/>
+                                <PrivateRoute path={profilePath(':userName')} component={ProfilePage}/>
+                                <PrivateRoute path={errorsPath} component={TestError}/>
                                 <Route path={serverErrorPath} component={ServerError}/>
-                                <Route component={NotFound}/>
+                                <PrivateRoute component={NotFound}/>
                             </Switch>
                         </Container>
                     </>
