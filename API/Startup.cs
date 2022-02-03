@@ -54,8 +54,9 @@ namespace API
                 .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
                 .FormActions(s => s.Self())
                 .FrameAncestors(s => s.Self())
-                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com"))
+                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:"))
                 .ScriptSources(s => s.Self().CustomSources("sha256-5z2+Ze10iTQeEhl5yYkIAwkHn3wDBubYTTCXC0g4QB0="))
+            
                 );
             
             if (env.IsDevelopment())
@@ -65,7 +66,7 @@ namespace API
             }
             else
             {
-                //analog of hsts for huroku
+                //analog of hsts for heroku
                 app.Use(async (context, next) =>
                 {
                     context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
