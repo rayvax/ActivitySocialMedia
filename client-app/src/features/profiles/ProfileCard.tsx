@@ -3,7 +3,7 @@ import {Profile}                              from "../../app/models/profile";
 import {Card, Icon, Image}                    from "semantic-ui-react";
 import {Link}                                 from "react-router-dom";
 import {profileImagePlaceholder, profilePath} from "../../utils/paths";
-import FollowButton                           from "./FollowButton";
+import FollowButton                           from "./followings/FollowButton";
 import {observer}                             from "mobx-react-lite";
 
 interface Props
@@ -22,7 +22,7 @@ export default observer(function ProfileCard({profile, aboutLength = 40}: Props)
         }
     }
 
-    const aboutContent = profile.about ? truncate(profile.about) : `I am ${profile.displayName}`
+    const aboutContent = profile.about ? truncate(profile.about) : `Hello, I am ${profile.displayName}`
 
     return (
         <Card as={Link} to={profilePath(profile.userName)}>

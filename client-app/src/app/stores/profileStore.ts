@@ -1,7 +1,14 @@
 import {makeAutoObservable, reaction, runInAction} from "mobx";
-import {Profile, Photo, ProfileFormValues}         from "../models/profile";
+import {
+    Profile,
+    Photo,
+    ProfileFormValues,
+    ProfileActivitiesPredicate,
+    FollowingsPredicate
+}                                                  from "../models/profile";
 import agent                                       from "../agent/agent";
 import {store}                                     from "./store";
+import {ProfileActivity}                           from "../models/activity";
 
 export enum ActiveTab
 {
@@ -12,18 +19,26 @@ export enum ActiveTab
     Following,
 }
 
+export enum EventsActiveTab
+{
+    Future,
+    Past,
+    Hosting
+}
+
 export default class ProfileStore
 {
     private _profile: Profile | null = null;
     private _isLoadingProfile = false;
     private _isUploading = false;
     private _isLoading = false; //setting main or deleting photo
+    private _activeTab: ActiveTab = 0;
 
     private _followings: Profile[] = [];
     private _isLoadingFollowers = false;
 
-    private _activeTab: ActiveTab = 0;
-
+    private _eventsActiveTab: EventsActiveTab = 0;
+    private _profileActivities: ProfileActivity[] = []
 
     constructor()
     {
@@ -40,12 +55,32 @@ export default class ProfileStore
                 {
                     this._followings = [];
                 }
+                if(activeTab === ActiveTab.Events)
+                {
+                    this._eventsActiveTab = 0;
+                    this.loadProfileActivities(this.eventPredicate);
+                }
+                else
+                {
+                    this._profileActivities = [];
+                }
+            })
+
+        reaction(() => this._eventsActiveTab,
+            () =>
+            {
+                this.loadProfileActivities(this.eventPredicate);
             })
     }
 
     public get profile()
     {
         return this._profile;
+    }
+
+    public get profileActivities()
+    {
+        return this._profileActivities;
     }
 
     public get isLoadingProfile()
@@ -84,6 +119,27 @@ export default class ProfileStore
         return false;
     }
 
+    private get eventPredicate()
+    {
+        let predicate: ProfileActivitiesPredicate;
+        switch(this._eventsActiveTab)
+        {
+            case EventsActiveTab.Hosting:
+                predicate = 'hosting';
+                break;
+
+            case EventsActiveTab.Future:
+                predicate = 'future';
+                break;
+
+            case EventsActiveTab.Past:
+                predicate = 'past';
+                break;
+        }
+
+        return predicate
+    }
+
     public get activeTab()
     {
         return this._activeTab;
@@ -92,6 +148,11 @@ export default class ProfileStore
     public set activeTab(value: any)
     {
         this._activeTab = value;
+    }
+
+    public set eventsActiveTab(value: any)
+    {
+        this._eventsActiveTab = value;
     }
 
     loadProfile = async (userName: string) =>
@@ -251,7 +312,7 @@ export default class ProfileStore
         })
     }
 
-    private loadFollowings = async (predicate: string) =>
+    private loadFollowings = async (predicate: FollowingsPredicate) =>
     {
         this._isLoadingFollowers = true;
 
@@ -268,6 +329,27 @@ export default class ProfileStore
         {
             runInAction(() => this._isLoadingFollowers = false);
         }
+    }
+
+    private loadProfileActivities = (predicate: ProfileActivitiesPredicate | undefined) =>
+    {
+        if(!predicate)
+            return;
+
+        return this.runInLoading(async () =>
+        {
+            if(this._profile)
+            {
+                const activities = await agent.Profiles.getProfileActivities(this._profile.userName, predicate);
+
+                activities.forEach(activity =>
+                {
+                    activity.date = new Date(activity.date);
+                })
+
+                runInAction(() => this._profileActivities = activities)
+            }
+        })
     }
 
     private runInLoading = async (fn: () => Promise<void>) =>

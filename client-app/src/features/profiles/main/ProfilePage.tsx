@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
-import {useParams}        from "react-router-dom";
-import {useStore}         from "../../app/stores/store";
-import ProfileHeader      from "./ProfileHeader";
-import {Grid}             from "semantic-ui-react";
-import ProfileContent     from "./ProfileContent";
-import LoadingComponent   from "../../app/layout/LoadingComponent";
-import {observer}         from "mobx-react-lite";
+import {useParams}      from "react-router-dom";
+import {useStore}    from "../../../app/stores/store";
+import ProfileHeader from "./ProfileHeader";
+import {Grid}           from "semantic-ui-react";
+import ProfileContent   from "./ProfileContent";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import {observer}       from "mobx-react-lite";
 
 export default observer(function ProfilePage()
 {

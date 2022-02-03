@@ -1,6 +1,6 @@
-import axios, {AxiosError, AxiosResponse}                 from "axios";
-import {Activity, ActivityFormValues}                     from "../models/activity";
-import {toast}                                            from "react-toastify";
+import axios, {AxiosError, AxiosResponse}              from "axios";
+import {Activity, ActivityFormValues, ProfileActivity} from "../models/activity";
+import {toast}                                         from "react-toastify";
 import {history}                                          from "../../index";
 import {store}                                            from "../stores/store";
 import {User, UserFormValues} from "../models/user";
@@ -10,12 +10,19 @@ import {
     activityPath, allProfilesPath,
     attendActivityPath, followListPath, followPath,
     loginPath,
-    photosPath,
+    photosPath, profileActivitiesPath,
     profilePath,
     registerPath, setMainPhotoPath
-}                                                           from "../../utils/paths";
-import {Profile, Photo, ProfileFormValues, FollowingStatus} from "../models/profile";
-import {PaginatedResult}                                    from "../models/pagination";
+}                        from "../../utils/paths";
+import {
+    Profile,
+    Photo,
+    ProfileFormValues,
+    FollowingStatus,
+    ProfileActivitiesPredicate,
+    FollowingsPredicate
+}                        from "../models/profile";
+import {PaginatedResult} from "../models/pagination";
 
 const sleep = (delay: number) =>
 {
@@ -139,9 +146,11 @@ const Profiles = {
     updateProfile: (profile: ProfileFormValues) => requests.put<void>(allProfilesPath, profile),
 
     updateFollowing: (userName: string) => requests.post<FollowingStatus>(followPath(userName), {}),
-    getFollowers: (userName: string) => requests.get<Profile[]>(followListPath(userName, 'followers')),
-    getFollowings: (userName: string, predicate: string) =>
-        requests.get<Profile[]>((followListPath(userName, predicate)))
+    getFollowings: (userName: string, predicate: FollowingsPredicate) =>
+        requests.get<Profile[]>((followListPath(userName, predicate))),
+
+    getProfileActivities: (userName: string, predicate: ProfileActivitiesPredicate) =>
+        requests.get<ProfileActivity[]>(profileActivitiesPath(userName, predicate))
 }
 
 const agent = {

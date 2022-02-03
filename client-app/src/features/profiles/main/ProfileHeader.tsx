@@ -1,9 +1,9 @@
 import React                                                             from "react";
 import { Divider, Grid, Header, Item, Segment, Statistic} from "semantic-ui-react";
-import {profileImagePlaceholder}                                         from "../../utils/paths";
-import {observer}                                                        from "mobx-react-lite";
-import {Profile}                                                         from "../../app/models/profile";
-import FollowButton                                                      from "./FollowButton";
+import {profileImagePlaceholder}                          from "../../../utils/paths";
+import {observer}                                         from "mobx-react-lite";
+import {Profile}    from "../../../app/models/profile";
+import FollowButton from "../followings/FollowButton";
 
 interface Props
 {

@@ -12,6 +12,14 @@ namespace API.Controllers
             var result = await Mediator.Send(new ProfileDetails.Query {UserName = userName});
             return ConvertToHttpResponse(result);
         }
+        
+        [HttpGet("{userName}/activities")]
+        public async Task<IActionResult> GetProfileActivities(string userName, string predicate)
+        {
+            var result = await Mediator.Send(new ProfileActivityList.Query
+                {UserName = userName, Predicate = predicate});
+            return ConvertToHttpResponse(result);
+        }
 
         [HttpPut]
         public async Task<IActionResult> SetProfile(ProfileEditInfo profileInfo)

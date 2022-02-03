@@ -35,6 +35,8 @@ export interface FollowingStatus
     following: boolean;
 }
 
+export type FollowingsPredicate = 'followers' | 'following';
+
 export class ProfileFormValues
 {
     displayName: string;
@@ -46,3 +48,5 @@ export class ProfileFormValues
         this.about = profile.about;
     }
 }
+
+export type ProfileActivitiesPredicate = 'hosting' | 'future' | 'past';

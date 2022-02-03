@@ -25,3 +25,6 @@ export const setMainPhotoPath = (id: string) => photosPath(id) + '/setmain';
 
 export const followPath = (userName: string) => `/follow/${userName}`;
 export const followListPath = (userName: string, predicate: string) => followPath(userName) + `?predicate=${predicate}`
+
+export const profileActivitiesPath = (userName: string, predicate: 'hosting' | 'future' | 'past') =>
+    `/profiles/${userName}/activities?predicate=${predicate}`

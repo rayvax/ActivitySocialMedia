@@ -1,10 +1,10 @@
 import React, {SyntheticEvent, useState}   from "react";
 import {observer}                          from "mobx-react-lite";
 import {Card, Header, Image, Grid, Button} from "semantic-ui-react";
-import {Photo}                    from "../../app/models/profile";
-import {useStore}                          from "../../app/stores/store";
-import PhotoUploadWidget                   from "../../app/common/imageUploader/PhotoUploadWidget";
-import NotFound                            from "../errors/NotFound";
+import {Photo}                             from "../../../app/models/profile";
+import {useStore}                          from "../../../app/stores/store";
+import PhotoUploadWidget                   from "../../../app/common/imageUploader/PhotoUploadWidget";
+import NotFound                            from "../../errors/NotFound";
 
 export default observer(function ProfilePhotos()
 {

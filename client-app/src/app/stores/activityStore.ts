@@ -116,7 +116,7 @@ export default class ActivityStore
         {
             this._predicates.forEach((value, key) =>
             {
-                if(key != 'startDate')
+                if(key !== 'startDate')
                     this._predicates.delete(key);
             })
         }

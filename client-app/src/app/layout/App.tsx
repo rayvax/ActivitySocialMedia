@@ -14,8 +14,8 @@ import NotFound           from "../../features/errors/NotFound";
 import ServerError        from "../../features/errors/ServerError";
 import {useStore}         from "../stores/store";
 import LoadingComponent   from "./LoadingComponent";
-import ModalContainer     from "../common/modal/ModalContainer";
-import ProfilePage from "../../features/profiles/ProfilePage";
+import ModalContainer from "../common/modal/ModalContainer";
+import ProfilePage    from "../../features/profiles/main/ProfilePage";
 import {
     activitiesPath,
     activityPath,
@@ -23,7 +23,7 @@ import {
     errorsPath, homePagePath,
     manageActivityPath, profilePath,
     serverErrorPath
-}                  from "../../utils/paths";
+}                     from "../../utils/paths";
 
 function App()
 {

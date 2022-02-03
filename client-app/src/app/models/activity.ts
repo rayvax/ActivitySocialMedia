@@ -57,3 +57,11 @@ export class ActivityFormValues
         } as Activity;
     }
 }
+
+export interface ProfileActivity
+{
+    id: string;
+    title: string;
+    date: Date;
+    category: string;
+}

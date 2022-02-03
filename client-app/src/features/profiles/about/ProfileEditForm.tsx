@@ -1,12 +1,12 @@
 import {Form, Formik}               from "formik";
 import React                        from "react";
-import {Profile, ProfileFormValues} from "../../app/models/profile";
+import {Profile, ProfileFormValues} from "../../../app/models/profile";
 import {observer}                   from "mobx-react-lite";
-import TextInput                    from "../../app/common/form/TextInput";
-import TextAreaInput                from "../../app/common/form/TextAreaInput";
+import TextInput                    from "../../../app/common/form/TextInput";
+import TextAreaInput                from "../../../app/common/form/TextAreaInput";
 import {Button}                     from "semantic-ui-react";
 import * as Yup                     from 'yup';
-import {useStore}                   from "../../app/stores/store";
+import {useStore}                   from "../../../app/stores/store";
 
 interface Props
 {

@@ -1,9 +1,9 @@
 import React, {useState}      from "react";
 import {observer}             from "mobx-react-lite";
 import {Button, Grid, Header} from "semantic-ui-react";
-import {useStore}             from "../../app/stores/store";
-import ProfileAboutEdit       from "./ProfileEditForm";
-import NotFound               from "../errors/NotFound";
+import {useStore}       from "../../../app/stores/store";
+import ProfileAboutEdit from "./ProfileEditForm";
+import NotFound         from "../../errors/NotFound";
 
 export default observer(function ProfileAbout()
 {
@@ -30,7 +30,7 @@ export default observer(function ProfileAbout()
                 {inEditMode ? (
                     <ProfileAboutEdit profile={profile} onSubmitted={() => setInEditMode(false)} />
                 ) : (
-                    <span style={{whiteSpace: 'pre-line'}}>{profile.about}</span>
+                    <span style={{whiteSpace: 'pre-line'}}>{profile.about || `Hello, I am ${profile.displayName}`}</span>
                 )}
             </Grid.Column>
         </Grid>
