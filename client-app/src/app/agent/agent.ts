@@ -12,7 +12,7 @@ import {
     loginPath,
     photosPath, profileActivitiesPath,
     profilePath,
-    registerPath, setMainPhotoPath
+    registerPath, setMainPhotoPath, accountVkLoginPath
 } from "../../utils/paths";
 import {
     Profile,
@@ -129,7 +129,9 @@ const Activities = {
 const Account = {
     currentUser: () => requests.get<User>(accountPath),
     login: (user: UserFormValues) => requests.post<User>(loginPath, user),
-    register: (user: UserFormValues) => requests.post<User>(registerPath, user)
+    register: (user: UserFormValues) => requests.post<User>(registerPath, user),
+    vkLogin: (accessToken: string, email: string) => 
+        requests.post<User>(accountVkLoginPath(accessToken, email), {})
 }
 
 const Profiles = {

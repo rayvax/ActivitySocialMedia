@@ -1,15 +1,18 @@
-import React                                       from "react";
-import {Link}                                      from "react-router-dom";
-import {Button, Container, Header, Image, Segment} from "semantic-ui-react";
-import {useStore}                                  from "../../app/stores/store";
-import {observer}                                  from "mobx-react-lite";
-import LoginForm                                   from "../user/LoginForm";
-import RegisterForm               from "../user/RegisterForm";
-import {activitiesPath, logoPath} from "../../utils/paths";
+import React                                                from "react";
+import {Link}                                               from "react-router-dom";
+import {Button, Container, Divider, Header, Image, Segment} from "semantic-ui-react";
+import {useStore}                                           from "../../app/stores/store";
+import {observer}                                           from "mobx-react-lite";
+import LoginForm                                            from "../user/LoginForm";
+import RegisterForm                                         from "../user/RegisterForm";
+import {activitiesPath, logoPath}                           from "../../utils/paths";
 
 export default observer(function HomePage()
 {
-    const {userStore, modalStore} = useStore();
+    const {
+        userStore,
+        modalStore
+    } = useStore();
     
     return (
         <Segment inverted vertical textAlign={'center'} className='masthead'>
@@ -43,6 +46,13 @@ export default observer(function HomePage()
                             >
                                 Register
                             </Button>
+
+                            <Divider horizontal inverted>Or</Divider>
+
+                            <Button onClick={userStore.redirectToVkLogin}
+                                    content={"VK"}
+                                    color={"facebook"}
+                            />
                         </>
                     )}
             </Container>

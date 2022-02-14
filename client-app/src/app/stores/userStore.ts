@@ -1,14 +1,15 @@
-import {User, UserFormValues}            from "../models/user";
-import {makeAutoObservable, runInAction} from "mobx";
-import agent                             from "../agent/agent";
-import {store}                           from "./store";
-import {history}                         from "../../index";
-import {activitiesPath, homePagePath} from "../../utils/paths";
-import {Profile}                      from "../models/profile";
+import {User, UserFormValues}                     from "../models/user";
+import {makeAutoObservable, runInAction}          from "mobx";
+import agent                                      from "../agent/agent";
+import {store}                                    from "./store";
+import {history}                                  from "../../index";
+import {activitiesPath, homePagePath, vkOAuthUrl} from "../../utils/paths";
+import {Profile}                                  from "../models/profile";
 
 export default class UserStore
 {
-    private user: User | null = null;
+    private _user: User | null = null;
+    private _isLoadingVkLogin = false;
 
     constructor()
     {
@@ -17,27 +18,32 @@ export default class UserStore
 
     public get isLoggedIn()
     {
-        return !!this.user;
+        return !!this._user;
     }
 
     public get currentUserName()
     {
-        return this.user?.userName;
+        return this._user?.userName;
     }
 
     public get currentImage()
     {
-        return this.user?.image;
+        return this._user?.image;
     }
 
     public get currentDisplayName()
     {
-        return this.user?.displayName;
+        return this._user?.displayName;
+    }
+    
+    public get isLoadingVkLogin()
+    {
+        return this._isLoadingVkLogin;
     }
 
     public getProfileWrapper = () =>
     {
-        return this.user ? new Profile(this.user) : null;
+        return this._user ? new Profile(this._user) : null;
     }
 
     public login = async (credentials: UserFormValues) =>
@@ -45,7 +51,7 @@ export default class UserStore
         const user = await agent.Account.login(credentials);
         store.commonStore.setToken(user.token);
 
-        runInAction(() => this.user = user);
+        runInAction(() => this._user = user);
 
         history.push(activitiesPath);
         store.modalStore.closeModal();
@@ -54,7 +60,7 @@ export default class UserStore
     public logout = () =>
     {
         store.commonStore.setToken(null);
-        this.user = null;
+        this._user = null;
 
         history.push(homePagePath);
     }
@@ -64,7 +70,7 @@ export default class UserStore
         const user = await agent.Account.register(registerValues);
         store.commonStore.setToken(user.token);
 
-        runInAction(() => this.user = user);
+        runInAction(() => this._user = user);
 
         history.push(activitiesPath);
         store.modalStore.closeModal();
@@ -75,7 +81,7 @@ export default class UserStore
         try
         {
             const user = await agent.Account.currentUser();
-            runInAction(() => this.user = user);
+            runInAction(() => this._user = user);
         }
         catch (error)
         {
@@ -85,13 +91,40 @@ export default class UserStore
 
     public setCurrentUserMainImage = (image: string) =>
     {
-        if(this.user)
-            this.user.image = image
+        if (this._user)
+            this._user.image = image
     }
 
     public setDisplayName = (displayName: string) =>
     {
-        if(this.user)
-            this.user.displayName = displayName;
+        if (this._user)
+            this._user.displayName = displayName;
+    }
+
+    public redirectToVkLogin = () =>
+    {
+        window.location.replace(vkOAuthUrl);
+    }
+
+    public vkLogin = async (accessToken: string, email: string) =>
+    {
+        this._isLoadingVkLogin = true;
+        try
+        {
+            const user = await agent.Account.vkLogin(accessToken, email);
+
+            runInAction(() => this._user = user);
+            store.commonStore.setToken(user.token);
+
+            history.push(activitiesPath);
+        }
+        catch (e)
+        {
+            console.log(e)
+        }
+        finally
+        {
+            runInAction(() => this._isLoadingVkLogin = false)
+        }
     }
 }

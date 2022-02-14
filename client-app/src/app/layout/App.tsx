@@ -13,18 +13,19 @@ import {ToastContainer}   from "react-toastify";
 import NotFound           from "../../features/errors/NotFound";
 import ServerError        from "../../features/errors/ServerError";
 import {useStore}         from "../stores/store";
-import LoadingComponent from "./LoadingComponent";
-import ModalContainer   from "../common/modal/ModalContainer";
-import ProfilePage      from "../../features/profiles/main/ProfilePage";
+import LoadingComponent   from "./LoadingComponent";
+import ModalContainer     from "../common/modal/ModalContainer";
+import ProfilePage        from "../../features/profiles/main/ProfilePage";
 import {
     activitiesPath,
     activityPath,
     createActivityPath,
     errorsPath, homePagePath,
     manageActivityPath, profilePath,
-    serverErrorPath
-}                       from "../../utils/paths";
-import PrivateRoute     from "./PrivateRoute";
+    serverErrorPath, vkLoginPath
+}                         from "../../utils/paths";
+import PrivateRoute       from "./PrivateRoute";
+import VkLogin            from "../../features/user/VkLogin";
 
 function App()
 {
@@ -61,12 +62,13 @@ function App()
                                 <PrivateRoute exact path={activitiesPath} component={ActivityDashboard}/>
                                 <PrivateRoute path={activityPath(':id')} component={ActivityDetails}/>
                                 <PrivateRoute key={location.key}
-                                       path={[createActivityPath, manageActivityPath(':id')]}
-                                       component={ActivityForm}/>
+                                              path={[createActivityPath, manageActivityPath(':id')]}
+                                              component={ActivityForm}/>
                                 <PrivateRoute path={profilePath(':userName')} component={ProfilePage}/>
                                 <PrivateRoute path={errorsPath} component={TestError}/>
                                 <Route path={serverErrorPath} component={ServerError}/>
-                                <PrivateRoute component={NotFound}/>
+                                <Route path={vkLoginPath} component={VkLogin}/>
+                                <Route component={NotFound}/>
                             </Switch>
                         </Container>
                     </>
