@@ -54,12 +54,9 @@ namespace API
                 .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
                 .FormActions(s => s.Self())
                 .FrameAncestors(s => s.Self())
-                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:",
-                    "data:", "https://sun9-24.userapi.com"))
-                .ScriptSources(s => s.Self().CustomSources("sha256-5z2+Ze10iTQeEhl5yYkIAwkHn3wDBubYTTCXC0g4QB0=",
-                    "sha256-kXwZFeDqzQYQxMANlJcsdedkJvek1q5ncjzFrCq4x+I="))
-            );  
-
+                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:"))
+                .ScriptSources(s => s.Self().CustomSources("sha256-5z2+Ze10iTQeEhl5yYkIAwkHn3wDBubYTTCXC0g4QB0="))
+            );
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
